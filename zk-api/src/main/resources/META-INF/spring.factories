@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.zhikao.api.config.RequestIdRelayConfiguration, \
+  com.zhikao.api.config.RoleCacheConfig, \
+  com.zhikao.api.config.FallbackConfig, \
+  com.zhikao.api.config.CategoryCacheConfig

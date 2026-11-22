@@ -1,0 +1,27 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+target
+*.class
+
+*.log
+.settings
+.project
+logs
+job
+# 前端
+web/node_modules/
+web/dist/
+web/.vite/
+web/dev.log
+web/dev.err
+*.err
+
+# 媒体服务 LOCAL 模式的文件落盘目录（本地演示用，不进仓库）
+uploads/

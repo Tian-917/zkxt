@@ -172,6 +172,36 @@ Vue 3 + Vite，**13 个学员端页面 + 管理后台**全部调真实接口（�
 - [证书域设计](docs/证书域设计.md) / [错题本设计](docs/错题本设计.md)
 - [前端原型](docs/mockup/zhikaoyun-ui-preview.png) / [前端实跑截图](docs/mockup/zhikaoyun-web-preview.png)
 
+## 快速开始
+
+前置：JDK 11、Maven 3.8+、Node 18+、Docker，以及 Nacos / MySQL / Redis / RabbitMQ。
+
+```bash
+# 1. 启动中间件（Nacos、MySQL、Redis、RabbitMQ、ES、MongoDB、XXL-Job）
+docker compose -f docker/docker-compose.yml up -d
+
+# 2. 导入各服务的库表与种子数据
+docs/sql/  # 按服务导入
+
+# 3. 编译并部署全部服务（走 Jenkins 或本地脚本）
+bash docker/deploy.sh
+
+# 4. 前端
+cd web && npm install && npm run build
+```
+
+服务默认端口：网关 `10010`，认证 `8081`，用户 `8082`，课程 `8086`，学习 `8090`，考试 `8089`，证书 `8091`，交易 `8088`，支付 `8087`。
+
+部署完成后访问：
+
+| 入口 | 地址 |
+|---|---|
+| 学员端 | http://www.zkxt.com |
+| 管理端 | http://manage.zkxt.com |
+| 接口文档 | http://api.zkxt.com/doc.html |
+
+测试账号：学员 `jack / 123456`，管理端 `admin / 123456`（带验证码）。
+
 ## 9. 密钥与环境变量
 
 仓库里**不含任何真实密钥**，全部走环境变量占位符（缺省为空，服务照常启动，只是对应能力不可用）：

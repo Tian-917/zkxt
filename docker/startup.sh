@@ -42,10 +42,13 @@ docker build -q -t "$IMAGE_NAME" "$WORK" >/dev/null
 
 echo "==> ${CONTAINER_NAME}: (re)create container, port ${PORT}"
 docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
-# 密钥库、token 秘钥等放在部署机的 env 文件里，不打进镜像
-# 注意：--env-file 的路径由 docker 守护进程解析，必须是宿主机上的路径
-ENV_FILE="${ENV_FILE:-/usr/local/src/zkxt.env}"
-ENV_OPT="--env-file ${ENV_FILE}"
+# 密钥库、token 秘钥等放在部署机（这里是 Jenkins 容器内）的 env 文件里，不打进镜像
+# 用 -e 传值而不是 --env-file：后者由 docker 守护进程读文件，路径必须对宿主机可见
+ENV_FILE="${ENV_FILE:-/var/jenkins_home/zkxt.env}"
+ENV_OPT=""
+if [ -f "$ENV_FILE" ]; then
+  ENV_OPT="$(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' -e 's/^/-e /' "$ENV_FILE" | tr '\n' ' ')"
+fi
 
 docker run -d --name "$CONTAINER_NAME" \
   -p "${PORT}:${PORT}" \

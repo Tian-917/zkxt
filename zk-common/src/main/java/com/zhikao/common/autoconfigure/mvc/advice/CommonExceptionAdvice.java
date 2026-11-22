@@ -60,6 +60,18 @@ public class CommonExceptionAdvice {
         return processResponse(400, 400, "请求数据不合法");
     }
 
+    /**
+     * 路径参数缺失（例如 /orders/{id} 没传 id），属于请求问题，按 400 返回
+     */
+    @ExceptionHandler({
+            org.springframework.web.bind.MissingPathVariableException.class,
+            org.springframework.web.bind.ServletRequestBindingException.class
+    })
+    public Object handleMissingPathVariable(Exception e) {
+        log.warn("路径参数缺失 -> {} : {}", e.getClass().getSimpleName(), e.getMessage());
+        return processResponse(400, 400, "请求参数缺失");
+    }
+
     @ExceptionHandler(DbException.class)
     public Object handleDbException(DbException e) {
         log.error("mysql数据库操作异常 -> ", e);

@@ -1,0 +1,47 @@
+server:
+  port: 8081  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+spring:
+  profiles:
+    active: dev
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        shared-configs: # 共享配置
+          - data-id: shared-spring.yaml # 共享spring配置
+            refresh: false
+          - data-id: shared-redis.yaml # 共享redis配置
+            refresh: false
+          - data-id: shared-mybatis.yaml # 共享mybatis配置
+            refresh: false
+          - data-id: shared-logs.yaml # 共享日志配置
+            refresh: false
+encrypt:
+  key-store:
+    alias: zkxt  #别名
+    location: classpath:zkxt.jks  #KeyStore 证书库名称
+    password: ${ZK_REDIS_PASSWORD:change_me}   #证书库密码
+    secret: ${ZK_TOKEN_SECRET:change_me}   #秘钥
+zk:
+  swagger:
+    enable: true
+    enableResponseWrap: true
+    package-path: com.zhikao.auth.controller
+    title: 职考云 - 权限微服务接口文档
+    description: 该服务用于管理权限相关信息
+    contact-name: 职考云·研发组
+    contact-url: https://github.com/yourname
+    contact-email: dev@example.com
+    version: v1.0
+  auth:
+    resource:
+      enable: true
+      includeLoginPaths:
+        - /menus/me
+        - /accounts/logout
+  jdbc:
+    database: zk_auth

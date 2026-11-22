@@ -1,0 +1,49 @@
+/* 管理后台通用样式（全局，供 admin/* 组件复用） */
+.adm-content { padding: 16px 24px; display: grid; gap: 14px; }
+.adm-panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 16px; }
+.adm-filter { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.adm-sel,
+.adm-input {
+  border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 8px 12px;
+  font-size: 13px; background: #fff; color: #334155; outline: none;
+}
+.adm-tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.adm-tbl th {
+  text-align: left; color: #64748b; font-weight: 500; font-size: 12px;
+  padding: 12px 8px; border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+.adm-tbl td { padding: 12px 8px; border-bottom: 1px dashed var(--line); vertical-align: top; }
+.adm-mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: #475569; }
+.adm-pager { display: flex; align-items: center; gap: 12px; justify-content: center; padding-top: 16px; }
+.adm-badge { background: #f1f5f9; color: #475569; border-radius: var(--radius-md); padding: 2px 8px; font-size: 11px; }
+.adm-badge.green { background: #ecfdf5; color: #059669; }
+.adm-badge.warn { background: #fffbeb; color: #b45309; }
+.adm-badge.red { background: #fef2f2; color: #b91c1c; }
+.adm-btn-sm { padding: 4px 10px; font-size: 12px; }
+.adm-empty { color: #94a3b8; font-size: 13px; padding: 18px 0; text-align: center; }
+.adm-subtabs { display: flex; gap: 6px; }
+.adm-subtab {
+  border: 1px solid var(--line); background: #fff; border-radius: 8px;
+  padding: 5px 12px; font-size: 12px; cursor: pointer; color: #475569;
+}
+.adm-subtab.on { border-color: #93c5fd; background: #eef2ff; color: var(--brand); font-weight: 600; }
+
+/* 表单（新增/编辑弹层） */
+.adm-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, .45); display: grid; place-items: center; z-index: 50; }
+.adm-dialog { background: #fff; border-radius: 14px; padding: 22px 24px; width: 640px; max-height: 86vh; overflow: auto; }
+.adm-dialog h3 { font-size: 16px; margin-bottom: 14px; }
+.adm-form { display: grid; gap: 12px; }
+.adm-field { display: grid; gap: 5px; }
+.adm-field > label { font-size: 12px; color: #64748b; }
+/* input/select 是替换元素，grid 的 stretch 不会拉伸它们，显式给 100% */
+.adm-field > .adm-input,
+.adm-field > .adm-sel,
+.adm-field > input,
+.adm-field > select,
+.adm-field .with-count .adm-input { width: 100%; box-sizing: border-box; }
+.adm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.adm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.adm-textarea {
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px;
+  font-family: inherit; resize: vertical; outline: none;
+}

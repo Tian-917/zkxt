@@ -321,7 +321,7 @@ const issueForm = reactive({
   termMode: 'days', termDays: 30, termBeginTime: '', termEndTime: ''
 })
 
-// 表单里的金额是「元」，ruleText 需要「分」，这里做一次换算用于实时预览
+// 表单金额是元，ruleText 用分
 const previewCoupon = computed(() => ({
   discountType: form.discountType,
   thresholdAmount: Math.round(Number(form.threshold || 0) * 100),
@@ -346,7 +346,7 @@ function ruleText(c) {
   const v = Number(c.discountValue ?? c.value ?? 0)
   const mx = Number(c.maxDiscountAmount ?? c.maxDiscount ?? 0)
   const cap = mx > 0 ? `，不超过${yuan(mx)}元` : ''
-  // 门槛为 0 时一律按「无门槛」展示，避免出现「满0元减10元」
+// 门槛为 0 按无门槛展示
   if (t === 3 || th <= 0) return `无门槛减${yuan(v)}元`
   if (t === 1) return `每满${yuan(th)}元减${yuan(v)}元${cap}`
   if (t === 2) return `满${yuan(th)}元打${(v / 10).toFixed(1).replace(/\.0$/, '')}折${cap}`
@@ -419,7 +419,7 @@ function removeScope(id) {
 }
 
 function fillForm(c) {
-  // 详情接口的 scopes 是对象列表（CouponScopeVO），列表接口没有 scopes
+// 详情接口的 scopes 是对象列表，列表接口没有
   const scopeIds = (c.scopes || []).map((x) => String(x && typeof x === 'object' ? (x.bizId ?? x.id) : x)).filter((x) => x && x !== 'undefined')
   Object.assign(form, {
     name: c.name || '',

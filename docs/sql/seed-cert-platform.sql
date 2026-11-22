@@ -6,20 +6,20 @@ INSERT INTO `category` (id, name, parent_id, level, priority, status) VALUES (20
 INSERT INTO `category` (id, name, parent_id, level, priority, status) VALUES (2081, '人力资源', 1004, 2, 99, 1) ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 -- 2. 课程改造
-UPDATE `course` SET name='初级会计职称 · 零基础全程班', first_cate_id=1004, second_cate_id=2028, third_cate_id=0, price=69900, free=0, status=2 WHERE id=1;
-UPDATE `course` SET name='初级会计 · 经济法基础精讲', first_cate_id=1004, second_cate_id=2028, third_cate_id=0, price=39900, free=0, status=2 WHERE id=2;
-UPDATE `course` SET name='中级会计 · 财务管理专项', first_cate_id=1004, second_cate_id=2028, third_cate_id=0, price=89900, free=0, status=2 WHERE id=3;
-UPDATE `course` SET name='教师资格 · 综合素质（小学）', first_cate_id=1004, second_cate_id=2027, third_cate_id=0, price=49900, free=0, status=2 WHERE id=4;
-UPDATE `course` SET name='教师资格 · 教育知识与能力', first_cate_id=1004, second_cate_id=2027, third_cate_id=0, price=49900, free=0, status=2 WHERE id=5;
-UPDATE `course` SET name='软考中级 · 系统集成项目管理工程师', first_cate_id=1004, second_cate_id=2080, third_cate_id=0, price=89900, free=0, status=2 WHERE id=6;
-UPDATE `course` SET name='软考中级 · 软件设计师', first_cate_id=1004, second_cate_id=2080, third_cate_id=0, price=89900, free=0, status=2 WHERE id=7;
-UPDATE `course` SET name='二级建造师 · 建设工程法规', first_cate_id=1004, second_cate_id=2029, third_cate_id=0, price=69900, free=0, status=2 WHERE id=8;
-UPDATE `course` SET name='二级建造师 · 施工管理', first_cate_id=1004, second_cate_id=2029, third_cate_id=0, price=69900, free=0, status=2 WHERE id=9;
-UPDATE `course` SET name='执业药师 · 药学专业知识', first_cate_id=1004, second_cate_id=2039, third_cate_id=0, price=129900, free=0, status=2 WHERE id=10;
-UPDATE `course` SET name='法考 · 民法精讲', first_cate_id=1004, second_cate_id=2046, third_cate_id=0, price=159900, free=0, status=2 WHERE id=1549025085494521857;
-UPDATE `course` SET name='考研英语 · 阅读理解专项', first_cate_id=1004, second_cate_id=2068, third_cate_id=0, price=59900, free=0, status=2 WHERE id=1552558707325374467;
+UPDATE `course` SET name='初级会计职称 · 零基础全程班', first_cate_id=1004, second_cate_id=2028, third_cate_id=3154, price=69900, free=0, status=2 WHERE id=1;
+UPDATE `course` SET name='初级会计 · 经济法基础精讲', first_cate_id=1004, second_cate_id=2028, third_cate_id=3154, price=39900, free=0, status=2 WHERE id=2;
+UPDATE `course` SET name='中级会计 · 财务管理专项', first_cate_id=1004, second_cate_id=2028, third_cate_id=3154, price=89900, free=0, status=2 WHERE id=3;
+UPDATE `course` SET name='教师资格 · 综合素质（小学）', first_cate_id=1004, second_cate_id=2027, third_cate_id=3243, price=49900, free=0, status=2 WHERE id=4;
+UPDATE `course` SET name='教师资格 · 教育知识与能力', first_cate_id=1004, second_cate_id=2027, third_cate_id=3243, price=49900, free=0, status=2 WHERE id=5;
+UPDATE `course` SET name='软考中级 · 系统集成项目管理工程师', first_cate_id=1004, second_cate_id=2080, third_cate_id=3629, price=89900, free=0, status=2 WHERE id=6;
+UPDATE `course` SET name='软考中级 · 软件设计师', first_cate_id=1004, second_cate_id=2080, third_cate_id=3629, price=89900, free=0, status=2 WHERE id=7;
+UPDATE `course` SET name='二级建造师 · 建设工程法规', first_cate_id=1004, second_cate_id=2029, third_cate_id=3162, price=69900, free=0, status=2 WHERE id=8;
+UPDATE `course` SET name='二级建造师 · 施工管理', first_cate_id=1004, second_cate_id=2029, third_cate_id=3162, price=69900, free=0, status=2 WHERE id=9;
+UPDATE `course` SET name='执业药师 · 药学专业知识', first_cate_id=1004, second_cate_id=2039, third_cate_id=3212, price=129900, free=0, status=2 WHERE id=10;
+UPDATE `course` SET name='法考 · 民法精讲', first_cate_id=1004, second_cate_id=2046, third_cate_id=3256, price=159900, free=0, status=2 WHERE id=1549025085494521857;
+UPDATE `course` SET name='考研英语 · 阅读理解专项', first_cate_id=1004, second_cate_id=2068, third_cate_id=3581, price=59900, free=0, status=2 WHERE id=1552558707325374467;
 UPDATE `course` SET name='人力资源管理师 · 四级', first_cate_id=1004, second_cate_id=2081, third_cate_id=0, price=79900, free=0, status=2 WHERE id=1589888774267072513;
-UPDATE `course` SET name='学历提升 · 自考本科英语', first_cate_id=1004, second_cate_id=2079, third_cate_id=0, price=39900, free=0, status=2 WHERE id=1589905661084430337;
+UPDATE `course` SET name='学历提升 · 自考本科英语', first_cate_id=1004, second_cate_id=2079, third_cate_id=3621, price=39900, free=0, status=2 WHERE id=1589905661084430337;
 
 -- 3. 课程目录 -> 考点章节
 UPDATE `course_catalogue` SET name='第1章 会计概述' WHERE id=2;
@@ -204,3 +204,7 @@ UPDATE `zk_exam`.`question` SET name='系统集成项目管理中，用于表示
 UPDATE `zk_exam`.`question_detail` SET options='["A. 甘特图", "B. 单代号网络图", "C. 资源直方图", "D. 鱼骨图"]', answer='B', analysis='单代号网络图用节点表示活动、箭线表示逻辑关系。' WHERE id=1587999779978223618;
 UPDATE `zk_exam`.`question` SET name='关于项目进度压缩，下列说法正确的是（　）。', type=2, score=5, difficulty=2 WHERE id=1589901500625817602;
 UPDATE `zk_exam`.`question_detail` SET options='["A. 赶工通常增加成本", "B. 快速跟进会增加返工风险", "C. 压缩关键路径一定缩短总工期", "D. 资源平衡可以缩短工期"]', answer='AB', analysis='资源平衡通常延长工期；压缩关键路径需考虑次关键路径。' WHERE id=1589901500625817602;
+
+-- 人力资源(2081) 下补一个三级分类，并挂到对应课程
+INSERT IGNORE INTO `category` (id, name, parent_id, level, priority, status) VALUES (3656, '人力资源法务', 2081, 3, 1, 1);
+UPDATE `course` SET third_cate_id = 3656 WHERE third_cate_id = 0;

@@ -108,14 +108,14 @@ function flash(t, good = true) {
   setTimeout(() => { msg.value = '' }, 3000)
 }
 
-// datetime-local 给的是 2026-11-20T19:00，后端 LocalDateTime 要 "yyyy-MM-dd HH:mm:ss"
+// datetime-local 转 yyyy-MM-dd HH:mm:ss
 function toBackendTime(v) {
   if (!v) return null
   const s = String(v).replace('T', ' ')
   return s.length === 16 ? s + ':00' : s
 }
 
-// 默认推送时间 = 5 分钟后，避免用户不填导致任务没有推送时间
+// 默认推送时间 5 分钟后
 function defaultPushTime() {
   const d = new Date(Date.now() + 5 * 60 * 1000)
   const p = (n) => String(n).padStart(2, '0')

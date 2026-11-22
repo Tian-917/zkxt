@@ -51,10 +51,10 @@ const router = createRouter({
 
 // 未登录一律去登录页；登录页和管理端放行
 router.beforeEach((to) => {
-  // 未登录访问需登录页面：不直接跳登录，先弹「需要登录」让用户选（去登录 / 暂时不登录）
+  // 未登录访问需登录页：先弹提示
   if (!to.meta.public && !isLoggedIn()) {
     showLoginPrompt(to.fullPath)
-    // 已在页面内：留在原地（弹窗浮在上面）；首次直接输网址：回首页，避免白屏
+  // 已在页面内就留在原地，首次访问回首页
     if (!router.currentRoute.value.name) return { path: '/' }
     return false
   }

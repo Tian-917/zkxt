@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 
-// 全局「需要登录」提示：路由守卫 / 页面动作触发，由 LoginPrompt 组件渲染
+// 全局登录提示，由 LoginPrompt 组件渲染
 export const loginPrompt = reactive({
   visible: false,
   redirect: '/',

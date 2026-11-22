@@ -182,7 +182,7 @@ async function toggleReply(r) {
 
 onMounted(async () => {
   await load(1)
-  // 预取「提问」总数，避免页签上一直显示 0
+// 预取提问总数
   try {
     const qa = await api.adminQaPage({ pageNo: 1, pageSize: 1 })
     counts.qa = Number((qa && qa.total) || 0)

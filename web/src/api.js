@@ -1,8 +1,17 @@
-import { authState, clearAuth, getToken, setAuth } from './auth'
+import {
+  adminAuthState,
+  authState,
+  clearAdminAuth,
+  clearAuth,
+  getToken,
+  inAdminArea,
+  setAdminAuth,
+  setAuth
+} from './auth'
 
 const BASE = '/api'
 
-/** 把对象拼成 query string（跳过空值） */
+/** 拼 query string，跳过空值 */
 export function qs(params = {}) {
   return Object.entries(params)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')
@@ -14,7 +23,7 @@ function buildHeaders() {
   const headers = { 'Content-Type': 'application/json' }
   const token = getToken()
   if (token) {
-    // 网关直接取 authorization 头的原始值做 JWT 校验，不加 Bearer 前缀
+    // 网关按 authorization 原值校验，不加 Bearer
     headers['authorization'] = token
   }
   return headers
@@ -22,16 +31,16 @@ function buildHeaders() {
 
 /**
  * 刷新 access token。
- * 关键点：
- * 1. 只刷一次（single-flight）：并发 401 时共用同一个 Promise，
- *    否则多个请求同时刷新会把 refresh token 轮换掉，刚刷新完又失效。
- * 2. credentials: 'include'：refresh token 在 HttpOnly cookie 里，
+ * 刷新 access token：
+ * 1.并发 401 只刷一次，共用同一个 Promise
+ * 2.refresh token 在 HttpOnly cookie 里，需带 credentials
+ * 3./accounts/refresh 在网关白名单，不需要旧 token
  *    跨端口/跨域时必须显式允许携带。
  * 3. /accounts/refresh 在网关免登录白名单里，不需要旧 token。
  */
 let refreshing = null
 
-export function refreshAccessToken() {
+export function refreshAccessToken(realm = 'student') {
   if (!refreshing) {
     refreshing = fetch(BASE + '/as/accounts/refresh', {
       method: 'GET',
@@ -43,7 +52,8 @@ export function refreshAccessToken() {
         const body = text ? JSON.parse(text) : null
         const token = body && body.data
         if (token) {
-          setAuth(token, authState.user)
+          if (realm === 'admin') setAdminAuth(token, adminAuthState.user)
+          else setAuth(token, authState.user)
           return token
         }
         return null
@@ -57,6 +67,14 @@ export function refreshAccessToken() {
 }
 
 function toLogin() {
+  // 管理端过期回管理端登录页，且只清员工身份，不影响学员端在线状态
+  if (inAdminArea()) {
+    clearAdminAuth()
+    if (!location.pathname.startsWith('/admin/login')) {
+      location.href = '/admin/login?expired=1'
+    }
+    return
+  }
   clearAuth()
   if (!location.pathname.startsWith('/login')) {
     location.href = '/login?expired=1'
@@ -81,11 +99,13 @@ async function request(path, options = {}, retried = false) {
 
   // 401 且没重试过、且不是登录/刷新接口本身 -> 刷新一次再重放
   if (unauthorized && !retried && !path.startsWith('/as/accounts/')) {
-    // 匿名浏览（从未登录）时不该被踢去登录页，交给调用方决定是否引导登录
-    if (!authState.token) {
+    const admin = inAdminArea()
+    const currentToken = admin ? adminAuthState.token : authState.token
+    // 从未登录的匿名访问不跳登录页
+    if (!currentToken) {
       throw new Error('需要登录')
     }
-    const token = await refreshAccessToken()
+    const token = await refreshAccessToken(admin ? 'admin' : 'student')
     if (token) {
       return request(path, options, true)
     }
@@ -112,7 +132,7 @@ export const api = {
   portal: (pageSize = 30) => request('/ss/courses/portal?pageNo=1&pageSize=' + pageSize),
   best: () => request('/ss/recommend/best'),
   catas: (courseId) => request('/cs/courses/catas/' + courseId),
-  // 课表 + 每个小节的学习记录（lessonId 在返回的 id 上）
+  // 课表 + 小节学习记录
   courseProgress: (courseId) => request('/ls/learning-records/course/' + courseId),
   myLesson: (courseId) => request('/ls/lessons/' + courseId),
   // 上报学习进度：sectionType 1=视频 2=考试
@@ -126,7 +146,7 @@ export const api = {
   wrongList: (mastered) => request('/es/wrong/list' + (mastered === undefined ? '' : '?mastered=' + mastered)),
   markMastered: (questionId) => request('/es/wrong/' + questionId + '/mastered', { method: 'POST' }),
   removeWrong: (questionId) => request('/es/wrong/' + questionId, { method: 'DELETE' }),
-  // 消息中心（网关 StripPrefix=1，/sms/inboxes -> message-service /inboxes）
+  // 消息中心
   inboxes: (params = {}) => {
     const qs = Object.entries(params)
       .filter(([, v]) => v !== undefined && v !== null && v !== '')
@@ -200,7 +220,7 @@ export const api = {
   createQuestion: (dto) => request('/es/questions', { method: 'POST', body: JSON.stringify(dto) }),
   deleteQuestion: (id) => request('/es/questions/' + id, { method: 'DELETE' }),
 
-  // 管理端 - 内容审核（笔记 / 提问 / 回答）
+  // 管理端 - 内容审核
   adminNotePage: (params) => request('/ls/admin/notes/page?' + qs(params)),
   hideNote: (id, hidden) => request(`/ls/admin/notes/${id}/hidden/${hidden}`, { method: 'PUT' }),
   adminQaPage: (params) => request('/ls/admin/questions/page?' + qs(params)),
@@ -252,7 +272,7 @@ export const api = {
   // 我的考试
   myExams: (params) => request('/es/exams/page?' + qs(params)),
 
-  // 优惠券（学员端）
+  // 优惠券
   myCoupons: (params) => request('/prs/user-coupons/page?' + qs(params)),
   issuingCoupons: () => request('/prs/coupons/list'),
   receiveCoupon: (id) => request(`/prs/user-coupons/${id}/receive`, { method: 'POST' }),

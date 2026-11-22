@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * 小节信息：所属课程 id、媒体 id
- * <p>
- * 注意：项目全局把 Long 序列化成字符串（防止前端精度丢失），但这份 DTO 只用于服务之间的
- * Feign 调用，必须保持数字形态，否则反序列化回 Long 时会变成 null。
  */
 @Data
 @ApiModel("小节信息：所属课程id和媒体id")

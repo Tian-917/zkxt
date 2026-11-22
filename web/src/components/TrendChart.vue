@@ -62,8 +62,8 @@ const gid = 'g' + Math.random().toString(36).slice(2, 8)
 const nums = computed(() => props.values.map((v) => Number(v) || 0))
 const vMax = computed(() => (nums.value.length ? Math.max(...nums.value) : 1))
 const vMin = computed(() => (nums.value.length ? Math.min(...nums.value) : 0))
-// 上下留白，避免曲线贴边
-// 把上下界对齐到"好看的刻度"（1/2/5 × 10^n），避免出现 43,423 这种轴标
+// 上下留白
+// 刻度取 1/2/5 × 10^n
 const nice = computed(() => {
   const span = Math.max(vMax.value - vMin.value, Math.abs(vMax.value) * 0.05, 1)
   const raw = span / 4

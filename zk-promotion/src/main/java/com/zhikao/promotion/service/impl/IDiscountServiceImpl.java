@@ -48,6 +48,12 @@ public class IDiscountServiceImpl implements IDiscountService {
 
     @Override
     public List<CouponDiscountDTO> findDiscountSolution(List<OrderCourseDTO> orderCourses) {
+        // 0.课程参数为空直接返回，否则限定范围的券会被当成不限范围
+        if (CollUtils.isEmpty(orderCourses)
+                || orderCourses.stream().anyMatch(c -> c == null || c.getId() == null)) {
+            log.warn("计算优惠方案时课程参数为空，直接返回空方案");
+            return Collections.emptyList();
+        }
         // 1.查询我的所有可用的优惠券
         List<Coupon> coupons = userCouponMapper.queryMyCoupons(UserContext.getUser());
         if(CollUtils.isEmpty(coupons)){
@@ -76,34 +82,25 @@ public class IDiscountServiceImpl implements IDiscountService {
         for (Coupon c : availableCoupons) {
             solutions.add(List.of(c));
         }
-        // 4.计算方案的优惠券明细
-        List<CouponDiscountDTO> list = Collections.synchronizedList(new ArrayList<>(solutions.size()));
-        // 4.1定义闭锁
-        CountDownLatch latch = new CountDownLatch(solutions.size());
+        // 4.并发计算每个方案的优惠明细
+        List<CompletableFuture<CouponDiscountDTO>> futures = new ArrayList<>(solutions.size());
         for (List<Coupon> solution : solutions) {
-            // 4.2异步计算
-            CompletableFuture
-                    .supplyAsync(
-                            () -> calculateSolutionDiscount(availableCouponMap, orderCourses, solution),
-                            discountSolutionExecutor
-                    )
-                    .whenComplete((dto, ex) -> {
-                        // 4.3提交任务结果
-                        if (ex != null) {
-                            log.error("优惠方案计算失败", ex);
-                        } else if (dto != null) {
-                            list.add(dto);
-                        }
-                        latch.countDown();
-                    });
-            //list.add(calculateSolutionDiscont(availableCouponMap, orderCourses, solution));
+            futures.add(CompletableFuture.supplyAsync(
+                    () -> calculateSolutionDiscount(availableCouponMap, orderCourses, solution),
+                    discountSolutionExecutor
+            ));
         }
-        // 4.4等待运算结果
-        try {
-            latch.await(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            log.error("优惠方案计算被中断，{}", e.getMessage());
-            Thread.currentThread().interrupt();
+        List<CouponDiscountDTO> list = new ArrayList<>(futures.size());
+        for (CompletableFuture<CouponDiscountDTO> future : futures) {
+            try {
+                CouponDiscountDTO dto = future.get(3, TimeUnit.SECONDS);
+                if (dto != null) {
+                    list.add(dto);
+                }
+            } catch (Exception e) {
+                // 单个方案算失败不影响其它方案
+                log.error("优惠方案计算失败，{}", e.getMessage());
+            }
         }
         // 5.筛选最优解
         return findBestSolution(list);

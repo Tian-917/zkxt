@@ -560,7 +560,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     @Override
     public CourseStatisticsVO queryStatistics() {
-        // 一次分组查询搞定 status × courseType 的组合计数，避免 7 次 count
+        // 1.按 status × courseType 分组统计
         QueryWrapper<Course> qw = Wrappers.query();
         qw.select("status", "course_type", "count(*) as cnt").groupBy("status", "course_type");
         List<Map<String, Object>> rows = baseMapper.selectMaps(qw);

@@ -513,7 +513,7 @@ public class ExamServiceImpl implements IExamService {
         try {
             LearningLessonDTO lesson = learningClient.queryLearningRecordByCourse(record.getCourseId());
             if (lesson == null) {
-                // 查询失败时无法判断是否已同步，跳过以避免产生重复学习记录
+                // 查不到学习记录就不同步
                 log.warn("查询学习记录失败，跳过学习同步，examId={}", record.getId());
                 return;
             }

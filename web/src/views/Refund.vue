@@ -99,7 +99,7 @@ async function load() {
   loading.value = true
   try {
     const data = await api.myRefunds({ pageNo: 1, pageSize: 50 })
-    // 后端按 id 正序返回，这里按创建时间倒序，最新的退款申请排在最前
+// 按创建时间倒序
     list.value = ((data && data.list) || []).slice().sort((a, b) => String(b.createTime || '').localeCompare(String(a.createTime || '')))
   } catch (e) {
     list.value = []

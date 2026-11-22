@@ -16,16 +16,22 @@
             </p>
             <div class="price" style="font-size:15px">
               <b style="font-size:26px">{{ course.price ? fen(course.price) : '免费' }}</b>
-              <span class="muted">已购买可直接在「我的课表」学习</span>
+              <span class="muted">{{ owned ? '已购买，可直接开始学习' : '购买后可解锁全部课程' }}</span>
             </div>
             <div class="actions">
-              <button class="btn primary" :disabled="busy" @click="buy">
-                {{ busy ? '处理中…' : (course.price ? '立即购买' : '免费报名') }}
-              </button>
-              <button class="btn ghost" :disabled="carting" @click="addToCart">
-                {{ carting ? '加入中…' : '加入购物车' }}
-              </button>
-              <button class="btn ghost" @click="$router.push('/learn/' + course.id)">去学习</button>
+              <template v-if="owned">
+                <button class="btn primary" disabled>已购买</button>
+                <button class="btn ghost" @click="$router.push('/learn/' + course.id)">去学习</button>
+              </template>
+              <template v-else>
+                <button class="btn primary" :disabled="busy" @click="buy">
+                  {{ busy ? '处理中…' : (course.price ? '立即购买' : '免费报名') }}
+                </button>
+                <button class="btn ghost" :disabled="carting" @click="addToCart">
+                  {{ carting ? '加入中…' : '加入购物车' }}
+                </button>
+                <button class="btn ghost" @click="$router.push('/learn/' + course.id)">去学习</button>
+              </template>
             </div>
             <div v-if="msg" class="notice" :class="ok ? 'ok' : 'bad'" style="margin-top:12px">{{ msg }}</div>
           </div>
@@ -35,7 +41,6 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
             <h3 style="font-size:15px">课程目录</h3>
             <span v-if="!owned" class="muted" style="font-size:12px">前 {{ TRIAL_COUNT }} 节可试看，购买后解锁全部</span>
-            <span v-else class="badge green" style="font-size:11px">已购买</span>
           </div>
           <div v-for="ch in course.chapters || []" :key="ch.id" style="margin-bottom:12px">
             <div class="chapter">{{ ch.name }}</div>
@@ -91,7 +96,7 @@ async function addToCart() {
 const msg = ref('')
 const ok = ref(false)
 
-// 前 N 个可试看的小节 id（按目录顺序）
+// 可试看的小节 id
 const trialIds = computed(() => {
   const ids = []
   for (const ch of (course.value?.chapters || [])) {
@@ -102,7 +107,7 @@ const trialIds = computed(() => {
   return ids
 })
 
-// 以后端 course_catalogue.trailer 为准；没有标任何 trailer 的老课程退回"前 N 节"
+// 以 course_catalogue.trailer 为准，没标记的退回前 N 节
 const hasTrailerFlag = computed(() =>
   (course.value?.chapters || []).some((ch) => (ch.sections || []).some((x) => x.trailer === true))
 )

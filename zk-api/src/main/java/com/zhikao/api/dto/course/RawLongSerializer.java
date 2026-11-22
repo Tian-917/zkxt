@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 /**
- * 原样输出数字（不走全局的 Long -> String 策略）。
- * 仅用于服务间 Feign 调用的 DTO 字段。
+ * 原样输出数字，用于服务间调用的 DTO 字段
  */
 public class RawLongSerializer extends JsonSerializer<Long> {
 

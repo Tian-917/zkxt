@@ -475,16 +475,8 @@ public class CourseDraftServiceImpl extends ServiceImpl<CourseDraftMapper, Cours
     }
 
     /**
-     * 复制课程题目到草稿。
-     * <p>这里**不能**加 @GlobalTransactional，原因有两个，都已实测：</p>
-     * <ol>
-     *   <li>它只被同类内部的 downShelf() 调用，Spring AOP 拦截不到自调用，注解放这里等于没生效；</li>
-     *   <li>把它上移到 downShelf() 后确实进会入全局事务，但 Seata AT 不支持
-     *   {@code INSERT INTO ... SELECT} 语法（下架的 copy 逻辑正是这种 SQL），
-     *   会抛 {@code NotSupportYetException: not support the sql syntax insert with query}，
-     *   导致下架必然失败。</li>
-     * </ol>
-     * <p>结论：要真正启用分布式事务，必须先把这三个 copy 语句改成"先查再批量插入"。</p>
+     * 复制课程题目到草稿
+     * 不能加 @GlobalTransactional：自调用拦不到，且 Seata AT 不支持 insert ... select
      */
     public void copySubject2Draft(Long courseId) {
         // 1.查询课程有关的小节信息

@@ -41,7 +41,7 @@
 import Icon from './components/Icon.vue'
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { authState, clearAuth, setAuth } from './auth'
+import { authState, clearAuth, inAdminArea, setAuth } from './auth'
 import { api } from './api'
 import { refreshUnread, unread } from './store'
 import LoginPrompt from './components/LoginPrompt.vue'
@@ -54,6 +54,8 @@ const showChrome = computed(() => !FULL_PAGE.includes(route.path) && !route.path
 const avatarText = computed(() => (authState.user && authState.user.name ? authState.user.name[0] : '游'))
 
 onMounted(async () => {
+  // 管理端独立身份，学员态不参与
+  if (inAdminArea()) return
   // 每次进入应用校验一次会话：token 过期会自动续期，顺带刷新用户名
   const user = authState.user
   if (!authState.token || !user || !user.userId) return
@@ -63,7 +65,7 @@ onMounted(async () => {
       setAuth(authState.token, { ...user, name: profile.name })
     }
   } catch (e) {
-    /* 401 已由 api 层处理（续期失败会跳登录），这里静默 */
+    /* 401 由 api 层统一处理 */
   }
   await refreshUnread()
 })

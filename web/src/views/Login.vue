@@ -63,7 +63,7 @@ async function submit() {
   loading.value = true
   try {
     const dto = { type: 1, password: form.password, rememberMe: form.rememberMe }
-    // 含 @ 或纯数字按手机号传，否则当用户名
+// 含 @ 或纯数字按手机号传
     if (/^\d{11}$/.test(form.account)) dto.cellPhone = form.account
     else dto.username = form.account
 

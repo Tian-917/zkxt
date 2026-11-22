@@ -22,7 +22,7 @@ public enum PayChannel {
         try {
             return PayChannel.valueOf(value).getDesc();
         } catch (IllegalArgumentException e) {
-            // 未知渠道（例如历史数据里的 mock）不应该让整个页面 500
+            // 未知渠道返回原值
             return value;
         }
     }

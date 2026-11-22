@@ -323,7 +323,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         detailService.updateStatusByOrderId(orderId, OrderStatus.CLOSED.getValue());
         // 6.退还优惠券
         if (CollUtils.isNotEmpty(order.getCouponIds())) {
-            // 系统超时取消时没有用户上下文，这里临时补上订单所属用户，保证 Feign 能透传用户信息
+            // 1.超时取消没有用户上下文，补上订单所属用户
             boolean needRestore = UserContext.getUser() == null;
             if (needRestore) {
                 UserContext.setUser(order.getUserId());
@@ -383,7 +383,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Map<Long, List<OrderDetailVO>> detailMap = details.stream()
                 .map(od -> {
                     OrderDetailVO v = BeanUtils.copyBean(od, OrderDetailVO.class);
-                    // 与「订单详情」接口保持一致：已支付且没有进行中的退款申请才可退
+                    // 1.已支付且没有进行中的退款申请才可退
                     v.setCanRefund(OrderStatus.canRefund(od.getStatus())
                             && !RefundStatus.inProgress(v.getRefundStatus()));
                     return v;

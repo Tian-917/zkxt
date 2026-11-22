@@ -17,7 +17,7 @@
           </button>
         </nav>
         <div class="side-foot">
-          <div class="muted" style="font-size:12px">{{ authState.user ? authState.user.name : '' }}（员工）</div>
+          <div class="muted" style="font-size:12px">{{ adminAuthState.user ? adminAuthState.user.name : '' }}（员工）</div>
           <button class="btn ghost" style="padding:5px 10px;font-size:12px;margin-top:8px" @click="logout">退出</button>
         </div>
       </aside>
@@ -36,7 +36,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { authState, clearAuth } from '../auth'
+import { adminAuthState, clearAdminAuth } from '../auth'
 import Dashboard from './admin/Dashboard.vue'
 import Courses from './admin/Courses.vue'
 import Refunds from './admin/Refunds.vue'
@@ -68,9 +68,9 @@ const tab = ref('dashboard')
 const currentMenu = computed(() => menus.find((m) => m.key === tab.value) || menus[0])
 const currentComponent = computed(() => currentMenu.value.comp)
 // 员工 token 里 roleId=1
-const isStaff = computed(() => !!(authState.user && Number(authState.user.roleId) === 1))
+const isStaff = computed(() => !!(adminAuthState.user && Number(adminAuthState.user.roleId) === 1))
 
-// 非员工/未登录：跳转到独立的管理端登录页（学员端登录页不提供员工入口）
+// 非员工跳管理端登录页
 function gotoAdminLogin() {
   if (!isStaff.value) {
     router.replace('/admin/login')
@@ -83,7 +83,7 @@ watch(isStaff, (v) => {
 })
 
 function logout() {
-  clearAuth()
+  clearAdminAuth()
   router.replace('/admin/login')
 }
 

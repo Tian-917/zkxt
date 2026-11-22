@@ -33,14 +33,15 @@
         <div class="panel">
           <div class="coupon-line">
             <span class="cl-label">优惠券</span>
-            <select v-model.number="couponIdx" class="cl-select">
+            <select v-if="coupons.length" v-model.number="couponIdx" class="cl-select">
               <option :value="-1">不使用优惠券</option>
               <option v-for="(c, i) in coupons" :key="i" :value="i">
-                {{ (c.rules || []).join(' + ') }}（减 {{ fen(c.discountAmount) }}）
+                {{ (c.rules || []).join(' + ') }}（减 ¥{{ (Number(c.discountAmount || 0) / 100).toFixed(2) }}）
               </option>
             </select>
-            <span class="muted" style="font-size:12px">
-              {{ coupons.length ? '共 ' + coupons.length + ' 个可用方案' : '当前没有可用优惠券' }}
+            <span v-else class="muted" style="font-size:13px">当前订单没有可用的优惠券</span>
+            <span v-if="coupons.length" class="muted" style="font-size:12px">
+              共 {{ coupons.length }} 个可用方案
             </span>
           </div>
           <div class="amount-box">
@@ -96,7 +97,7 @@ import { api, fen } from '../api'
 
 const route = useRoute()
 
-// 注意：课程 id 可能是 19 位雪花号，超过 JS 安全整数范围，必须按字符串传，不能 Number()
+  // 课程 id 是 19 位雪花号，按字符串传，不能 Number()
 const courseIds = ref(String(route.query.courseIds || '').split(',').filter(Boolean))
 const courses = ref([])
 const orderId = ref(null)
@@ -123,7 +124,8 @@ onMounted(async () => {
     orderId.value = pre.orderId
     amount.value = pre.totalAmount || 0
     courses.value = (pre.courses || []).map((c) => ({
-      courseId: c.courseId,
+      // 后端字段名是 id
+      courseId: String(c.id ?? c.courseId ?? ''),
       courseName: c.name || c.courseName,
       price: c.price || 0
     }))
@@ -140,15 +142,20 @@ onMounted(async () => {
   }
 })
 
-/** 按课程算可用优惠券方案（promotion 需要 cateId，所以先查课程详情） */
+/** 按课程算可用优惠券方案 */
 async function loadCoupons() {
   try {
     const courseList = []
     for (const c of courses.value) {
-      const detail = await api.courseDetail(c.courseId)
-      courseList.push({ id: c.courseId, cateId: detail.thirdCateId, price: c.price })
+      const detail = (await api.courseDetail(c.courseId)) || {}
+      const cateId = Number(detail.thirdCateId || detail.secondCateId || 0)
+      courseList.push({ id: c.courseId, cateId, price: c.price })
     }
-    coupons.value = (await api.availableCoupons(courseList)) || []
+    const list = (await api.availableCoupons(courseList)) || []
+    // 只保留真的能减钱的方案，并按优惠金额从大到小排
+    coupons.value = list
+      .filter((s) => Number(s.discountAmount) > 0)
+      .sort((a, b) => Number(b.discountAmount) - Number(a.discountAmount))
   } catch (e) {
     coupons.value = []
   }

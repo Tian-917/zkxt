@@ -1,12 +1,13 @@
 import { ref } from 'vue'
 import { api } from './api'
-import { authState } from './auth'
+import { authState, inAdminArea } from './auth'
 
 /** 全局未读数：导航栏红点用 */
 export const unread = ref(0)
 
 export async function refreshUnread() {
-  if (!authState.token) {
+  // 管理端是员工身份，不参与学员端未读数
+  if (inAdminArea() || !authState.token) {
     unread.value = 0
     return
   }

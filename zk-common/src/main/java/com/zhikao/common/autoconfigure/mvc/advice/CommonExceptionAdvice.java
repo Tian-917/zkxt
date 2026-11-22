@@ -44,7 +44,7 @@ public class CommonExceptionAdvice {
     }
 
     /**
-     * 空指针/数据库/请求体解析这类「用户传的数据不对」的异常统一按 400 返回
+     * 参数不合法，按 400 返回
      */
     @ExceptionHandler({
             org.springframework.dao.DataIntegrityViolationException.class,

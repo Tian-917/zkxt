@@ -74,7 +74,7 @@ const rightCount = computed(() => (result.value || []).filter((d) => d.correct).
 
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 const letter = (i) => letters[i]
-// 题库里的选项自带 "A. " 前缀，界面上已经有字母徽标，这里去掉避免重复
+// 选项自带 A. 前缀，去掉后加徽标
 const stripPrefix = (text) => String(text || '').replace(/^[A-H][.、．]\s*/, '')
 
 onMounted(async () => {

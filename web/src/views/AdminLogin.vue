@@ -30,10 +30,6 @@
       </form>
 
       <div v-if="msg" class="notice bad" style="margin-top:14px">{{ msg }}</div>
-
-      <div class="foot">
-        <router-link to="/login">← 返回学员端</router-link>
-      </div>
     </div>
   </div>
 </template>
@@ -42,7 +38,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api'
-import { decodeJwt, setAuth } from '../auth'
+import { decodeJwt, setAdminAuth } from '../auth'
 
 const router = useRouter()
 const form = reactive({ username: 'admin', password: '123456', rememberMe: true })
@@ -57,7 +53,7 @@ async function doLogin() {
   }
   busy.value = true
   try {
-    // 管理端专用登录接口，只允许员工账号（isStaff 校验在后端）
+    // 管理端登录，仅员工账号
     const token = await api.adminLogin({
       type: 1,
       username: form.username,
@@ -70,10 +66,10 @@ async function doLogin() {
       msg.value = '该账号不是员工账号，请从学员端登录'
       return
     }
-    setAuth(token, { userId: user.userId, roleId: user.roleId, name: form.username })
+    setAdminAuth(token, { userId: user.userId, roleId: user.roleId, name: form.username })
     try {
       const profile = await api.me(user.userId)
-      if (profile && profile.name) setAuth(token, { userId: user.userId, roleId: user.roleId, name: profile.name })
+      if (profile && profile.name) setAdminAuth(token, { userId: user.userId, roleId: user.roleId, name: profile.name })
     } catch (e) {
       /* 拿不到资料不影响登录 */
     }

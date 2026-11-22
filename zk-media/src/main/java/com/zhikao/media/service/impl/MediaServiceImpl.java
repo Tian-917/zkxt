@@ -58,7 +58,7 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
         try {
             return mediaStorage.getUploadSignature();
         } catch (Exception e) {
-            // 未配置云点播凭证时不要抛 500，返回空签名让前端提示「暂不支持上传」
+            // 未配置云点播时返回空签名
             return "";
         }
     }
@@ -169,7 +169,7 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
 
     @Override
     public MediaDTO save(MediaUploadResultDTO result) {
-        // 1.查询视频信息；未配置云点播凭证时会抛异常，这里降级为用请求里的地址入库
+        // 1.查询视频信息，拿不到就用请求里的地址
         java.util.List<Media> list;
         try {
             list = mediaStorage.queryMediaInfos(result.getFileId());
@@ -182,7 +182,7 @@ public class MediaServiceImpl extends ServiceImpl<MediaMapper, Media> implements
             return BeanUtils.toBean(media, MediaDTO.class);
         }
         if (list.isEmpty()) {
-            // 2.1 拿不到云点播信息：用请求里的地址落库
+            // 2.1 用请求里的地址落库
             media = BeanUtils.toBean(result, Media.class);
             media.setDuration(0F);
             media.setSize(0L);

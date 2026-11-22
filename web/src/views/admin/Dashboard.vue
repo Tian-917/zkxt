@@ -114,7 +114,7 @@ const current = computed(() => {
 
 const topItems = computed(() => top10.value.map((c) => ({ name: c.name, value: c.newStuNum })))
 
-// 课程维度更容易看出差异（分类维度只有一个分类，画出来是整圆）
+// 课程维度差异更明显
 const courseShare = computed(() => {
   const all = top10.value
     .map((c) => ({ name: c.name, value: Number(c.orderAmount) || 0 }))

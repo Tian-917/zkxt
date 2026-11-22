@@ -462,7 +462,7 @@ async function receive(c) {
 
 async function loadSign() {
   try {
-    // 后端返回的是「按天 0/1 数组」（index 0 对应 1 号），不是日期列表
+// 后端返回按天的 0/1 数组
     const arr = (await api.signRecords()) || []
     signList.value = arr.map((v, i) => (Number(v) === 1 ? i + 1 : 0)).filter(Boolean)
   } catch (e) {

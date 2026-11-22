@@ -88,7 +88,7 @@ public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper,
         // 1.获取登录用户
         Long userId = UserContext.getUser();
         // 1.1 兜底校验：学习进度只能写到自己课表里的课程
-        // 前端试看模式不写进度，但接口不能只依赖前端——伪造 lessonId 会污染他人课表
+        // 1.校验 lessonId 归属，防止伪造
         if (recordDTO.getLessonId() == null) {
             throw new BizIllegalException("未购买该课程，无法记录学习进度");
         }

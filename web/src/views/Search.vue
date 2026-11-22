@@ -112,7 +112,7 @@ function clean(s) {
 onMounted(async () => {
   try {
     const all = (await api.categories()) || []
-    // 只保留一级分类（parentId = 0），否则会把上百个子分类全铺出来
+// 只取一级分类
     topCates.value = all.filter((c) => String(c.parentId) === '0')
   } catch (e) {
     topCates.value = []

@@ -150,7 +150,7 @@ async function load(pageNo) {
   }
 }
 
-// 后端要求 cateIds 正好 3 个（一/二/三级），这里按 parentId 往上补全
+// 后端要求 cateIds 三个（一二三级）
 function buildCateIds() {
   if (!form.cateId) return []
   const chain = []

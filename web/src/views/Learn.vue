@@ -127,7 +127,7 @@ const playing = ref(false)
 const speed = ref(60)              // 默认 60 倍速：35 分钟的课 35 秒看完
 const speeds = [1, 10, 60]
 const lessonTab = ref('notes')      // 小节下的 tab：笔记 / 问答
-// 前 N 节可试看（按目录顺序）
+// 前 N 节可试看
 const trialIds = computed(() => {
   const ids = []
   for (const ch of chapters.value) {
@@ -140,7 +140,7 @@ const trialIds = computed(() => {
 const totalSections = computed(() =>
   chapters.value.reduce((n, ch) => n + (ch.sections || []).length, 0)
 )
-// 试看口径以课程目录的 trailer 字段为准（后端 course_catalogue.trailer）；
+// 试看以 course_catalogue.trailer 为准
 // 老课程若一条 trailer 都没标，则退回"前 N 节"的兜底规则
 const hasTrailerFlag = computed(() =>
   chapters.value.some((ch) => (ch.sections || []).some((x) => x.trailer === true))
@@ -248,7 +248,7 @@ function selectSection(section) {
   stop()
   current.value = section
   const rec = records.value[section.id]
-  // 已学完的节直接把进度拉满，避免显示"0% + 已学完"的矛盾状态
+// 学完的节进度直接拉满
   const total = section.mediaDuration || 0
   moment.value = rec ? (rec.finished ? total : rec.moment || 0) : 0
   lastReportedMoment = -999
@@ -278,7 +278,7 @@ function stop() {
 
 function tick() {
   moment.value = Math.min(duration.value, moment.value + speed.value)
-  // 每推进 15 秒（按视频时间）上报一次，避免每秒一个请求
+// 每 15 秒上报一次进度
   if (moment.value - lastReportedMoment >= 15 || moment.value >= duration.value) {
     report(false)
   }
@@ -287,7 +287,7 @@ function tick() {
 async function report(isFinal) {
   const section = current.value
   if (!section || !lessonId.value) return
-  // 试看模式不写学习进度（游客/未购买没有学习记录）
+// 试看不写学习进度
   if (!owned.value) return
   lastReportedMoment = moment.value
   const payload = {
@@ -296,7 +296,7 @@ async function report(isFinal) {
     sectionId: section.id,
     duration: duration.value,
     moment: isFinal ? duration.value : moment.value,
-    // 后端 Jackson 的 LocalDateTime 用的是 "yyyy-MM-dd HH:mm:ss"，不是 ISO 的带 T 格式
+// LocalDateTime 用 yyyy-MM-dd HH:mm:ss
     commitTime: nowStr()
   }
   try {
@@ -306,7 +306,7 @@ async function report(isFinal) {
       ...records.value,
       [section.id]: { moment: payload.moment, finished: rec.finished }
     }
-    // 到达 80% 后端会置为学完，这里再拉一次确认
+// 到 80% 后端置为学完，再拉一次确认
     if (payload.moment * 1.25 >= duration.value) {
       await loadProgress()
       if (isFinished(section.id)) {

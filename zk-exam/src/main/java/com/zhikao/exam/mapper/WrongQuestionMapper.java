@@ -16,7 +16,7 @@ import java.util.List;
 public interface WrongQuestionMapper extends BaseMapper<WrongQuestion> {
 
     /**
-     * 记一次错：一题一条，重复答错累加次数并把「已掌握」打回未掌握
+     * 记一次错：一题一条，重复答错累加次数并重置已掌握
      */
     @Insert("INSERT INTO wrong_question " +
             "(user_id, question_id, course_id, section_id, section_name, last_answer, wrong_count, last_wrong_time, mastered) " +

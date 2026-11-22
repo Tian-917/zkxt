@@ -25,3 +25,9 @@ web/dev.err
 
 # 媒体服务 LOCAL 模式的文件落盘目录（本地演示用，不进仓库）
 uploads/
+
+# 本地开发环境
+.idea/
+.DS_Store
+**/target/
+apifox/write-sweep-result.json

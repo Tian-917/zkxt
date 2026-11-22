@@ -20,7 +20,7 @@ pipeline {
     MVN_SETTINGS = '/var/jenkins_home/.m2/settings.xml'
     MVN_REPO = '/var/jenkins_home/.m2/repository'
     MAVEN_OPTS = '-Xmx512m'
-    NETWORK = 'heima-net'
+    NETWORK = 'zkxt-net'
     PROBE_HOST = '192.168.150.101'
   }
 

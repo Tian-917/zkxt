@@ -39,38 +39,36 @@ port_up() {
   (echo >"/dev/tcp/$PROBE_HOST/$1") >/dev/null 2>&1
 }
 
+# 网络不存在时自动创建，避免换机器部署时报 network not found
+docker network create "$NETWORK" >/dev/null 2>&1 || true
+
 echo "==> round 1: start $SERVICES"
 for svc in $SERVICES; do
   bash docker/startup.sh -c "zkxt-$svc" -n "$(jar_of "$svc")" -d "$(dir_of "$svc")" -p "$(port_of "$svc")" \
     || echo "!! $svc startup.sh 失败"
+  sleep 3
 done
 
-echo "==> round 1: waiting up to 420s"
-deadline=$((SECONDS + 420))
-while [ $SECONDS -lt $deadline ]; do
-  left=""
-  for svc in $SERVICES; do port_up "$(port_of "$svc")" || left="$left $svc"; done
-  [ -z "$left" ] && break
-  sleep 10
-done
-
-# 收集没起来的
-missing=""
-for svc in $SERVICES; do port_up "$(port_of "$svc")" || missing="$missing $svc"; done
-
-if [ -n "$missing" ]; then
-  echo "==> round 2: restart 未就绪:$missing"
-  for svc in $missing; do
-    docker restart "zkxt-$svc" >/dev/null 2>&1 || true
-  done
-  deadline=$((SECONDS + 420))
+echo "==> waiting for services"
+round=1
+while [ $round -le 4 ]; do
+  deadline=$((SECONDS + 300))
   while [ $SECONDS -lt $deadline ]; do
     left=""
-    for svc in $missing; do port_up "$(port_of "$svc")" || left="$left $svc"; done
+    for svc in $SERVICES; do port_up "$(port_of "$svc")" || left="$left $svc"; done
     [ -z "$left" ] && break
     sleep 10
   done
-fi
+  missing=""
+  for svc in $SERVICES; do port_up "$(port_of "$svc")" || missing="$missing $svc"; done
+  [ -z "$missing" ] && break
+  echo "==> round $round: restart 未就绪:$missing"
+  for svc in $missing; do
+    docker restart "zkxt-$svc" >/dev/null 2>&1 || true
+    sleep 3
+  done
+  round=$((round + 1))
+done
 
 echo "==> 结果:"
 failed=""

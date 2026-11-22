@@ -42,11 +42,17 @@ docker build -q -t "$IMAGE_NAME" "$WORK" >/dev/null
 
 echo "==> ${CONTAINER_NAME}: (re)create container, port ${PORT}"
 docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+# 密钥库、token 秘钥等放在部署机的 env 文件里，不打进镜像
+# 注意：--env-file 的路径由 docker 守护进程解析，必须是宿主机上的路径
+ENV_FILE="${ENV_FILE:-/usr/local/src/zkxt.env}"
+ENV_OPT="--env-file ${ENV_FILE}"
+
 docker run -d --name "$CONTAINER_NAME" \
   -p "${PORT}:${PORT}" \
   -e JAVA_OPTS="$JAVA_OPTS" \
   --memory 384m --memory-swap -1 \
   --network "$NETWORK" \
+  $ENV_OPT \
   "$IMAGE_NAME" >/dev/null
 
 echo "==> ${CONTAINER_NAME}: up (image=${IMAGE_NAME})"

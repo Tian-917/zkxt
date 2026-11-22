@@ -24,7 +24,7 @@ encrypt:
   key-store:
     alias: zkxt  #别名
     location: classpath:zkxt.jks  #KeyStore 证书库名称
-    password: ${ZK_REDIS_PASSWORD:change_me}   #证书库密码
+    password: ${ZK_JKS_PASSWORD:change_me}   #证书库密码
     secret: ${ZK_TOKEN_SECRET:change_me}   #秘钥
 zk:
   swagger:

@@ -1,0 +1,50 @@
+server:
+  port: 8094  #端口
+  tomcat:
+    uri-encoding: UTF-8   #服务编码
+spring:
+  profiles:
+    active: dev
+  application:
+    name: promotion-service
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        shared-configs: # 共享配置
+          - data-id: shared-spring.yaml # 共享spring配置
+            refresh: false
+          - data-id: shared-redis.yaml # 共享redis配置
+            refresh: false
+          - data-id: shared-mybatis.yaml # 共享mybatis配置
+            refresh: false
+          - data-id: shared-logs.yaml # 共享日志配置
+            refresh: false
+          - data-id: shared-feign.yaml # 共享feign配置
+            refresh: false
+          - data-id: shared-xxljob.yaml # 共享xxljob配置
+            refresh: false
+          - data-id: shared-mq.yaml # 共享mq配置
+            refresh: false
+zk:
+  swagger:
+    enable: true
+    enableResponseWrap: true
+    package-path: com.zhikao.promotion.controller
+    title: 职考云 - 促销中心接口文档
+    description: 该服务包含优惠促销有关功能
+    contact-name: 职考云·研发组
+    contact-url: https://github.com/yourname
+    contact-email: dev@example.com
+    version: v1.0
+  jdbc:
+    database: zk_promotion
+  auth:
+    resource:
+      enable: true #开启登录拦截功能
+      excludeLoginPaths: #排除无需拦截的路径
+        - /coupons/list
+  mq:
+    listener:
+      retry:
+        stateless: false # 无状态

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "职考云（zkxt）微服务总体架构",
+    "quality_profile": "showcase",
+    "viewBox": [1450, 680],
+    "views": [
+      { "id": "request-path", "label": "主请求链路", "focus": ["users", "gateway", "auth", "course"], "note": "客户端流量先到网关，由 zk-auth 完成 JWT 鉴权后转发给业务微服务。" },
+      { "id": "data-layer", "label": "数据与缓存", "focus": ["course", "user", "search", "media", "mysql", "redis", "es"], "note": "业务服务共享 MySQL 业务库、Redis 缓存与 Elasticsearch 索引。" },
+      { "id": "async-layer", "label": "异步与调度", "focus": ["trade", "pay", "message", "rabbitmq", "data", "xxljob"], "note": "RabbitMQ 承载异步解耦，XXL-Job 承担定时统计与核对任务。" }
+    ]
+  },
+  "components": [
+    { "id": "users", "type": "external", "label": "用户端", "sublabel": "Web · 小程序 · App", "pos": [610, 20], "size": [190, 56] },
+    { "id": "nacos", "type": "cloud", "label": "Nacos", "sublabel": "注册 + 配置中心", "pos": [330, 140], "size": [190, 60] },
+    { "id": "gateway", "type": "cloud", "label": "zk-gateway", "sublabel": "Spring Cloud Gateway", "tag": "统一入口", "pos": [610, 140], "size": [190, 60] },
+    { "id": "auth", "type": "security", "label": "zk-auth", "sublabel": "JWT · RBAC 鉴权", "pos": [890, 140], "size": [190, 60] },
+
+    { "id": "media", "type": "backend", "label": "zk-media", "sublabel": "媒资 · 文件 · OSS/COS", "pos": [50, 270], "size": [190, 62] },
+    { "id": "learning", "type": "backend", "label": "zk-learning", "sublabel": "学习进度 · 计划", "pos": [330, 270], "size": [190, 62] },
+    { "id": "course", "type": "backend", "label": "zk-course", "sublabel": "课程 · 分类 · 目录", "pos": [610, 270], "size": [190, 62] },
+    { "id": "trade", "type": "backend", "label": "zk-trade", "sublabel": "购物车 · 订单", "pos": [890, 270], "size": [190, 62] },
+    { "id": "pay", "type": "backend", "label": "zk-pay", "sublabel": "支付 · 退款 · 支付宝/微信", "pos": [1170, 270], "size": [190, 62] },
+
+    { "id": "exam", "type": "backend", "label": "zk-exam", "sublabel": "题库 · 考试", "pos": [50, 380], "size": [190, 62] },
+    { "id": "user", "type": "backend", "label": "zk-user", "sublabel": "学生 · 教师 · 员工", "pos": [330, 380], "size": [190, 62] },
+    { "id": "search", "type": "backend", "label": "zk-search", "sublabel": "搜索 · 推荐 · 兴趣", "pos": [610, 380], "size": [190, 62] },
+    { "id": "message", "type": "backend", "label": "zk-message", "sublabel": "短信 · 站内信 · 通知", "pos": [890, 380], "size": [190, 62] },
+    { "id": "data", "type": "backend", "label": "zk-data", "sublabel": "数据看板 · Top10", "pos": [1170, 380], "size": [190, 62] },
+
+    { "id": "mysql", "type": "database", "label": "MySQL", "sublabel": "业务数据库", "pos": [50, 530], "size": [190, 60] },
+    { "id": "redis", "type": "database", "label": "Redis", "sublabel": "缓存 · 分布式锁", "pos": [330, 530], "size": [190, 60] },
+    { "id": "es", "type": "database", "label": "Elasticsearch", "sublabel": "课程索引", "pos": [610, 530], "size": [190, 60] },
+    { "id": "rabbitmq", "type": "messagebus", "label": "RabbitMQ", "sublabel": "异步消息", "pos": [890, 530], "size": [190, 60] },
+    { "id": "xxljob", "type": "cloud", "label": "XXL-Job", "sublabel": "定时任务调度", "pos": [1170, 530], "size": [190, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "业务微服务集群（Spring Cloud Alibaba）", "wraps": ["media", "learning", "course", "trade", "pay", "exam", "user", "search", "message", "data"] },
+    { "kind": "region", "label": "数据与中间件", "wraps": ["mysql", "redis", "es", "rabbitmq", "xxljob"] }
+  ],
+  "connections": [
+    { "id": "users-gateway", "from": "users", "to": "gateway", "label": "HTTPS", "variant": "emphasis", "labelAt": [705, 108] },
+    { "id": "gateway-nacos", "from": "gateway", "to": "nacos", "label": "注册/配置", "variant": "dashed" },
+    { "id": "gateway-auth", "from": "gateway", "to": "auth", "label": "JWT 鉴权", "variant": "security" },
+    { "id": "gateway-course", "from": "gateway", "to": "course", "label": "路由转发", "variant": "emphasis", "labelAt": [705, 235] },
+    { "id": "course-learning", "from": "course", "to": "learning", "label": "Feign 调用" },
+    { "id": "trade-pay", "from": "trade", "to": "pay", "label": "Feign 下单" },
+    { "id": "exam-mysql", "from": "exam", "to": "mysql", "label": "SQL", "labelAt": [145, 486] },
+    { "id": "media-mysql", "from": "media", "to": "mysql", "label": "SQL", "fromSide": "right", "toSide": "right", "via": [[275, 301], [275, 560]], "labelAt": [275, 455] },
+    { "id": "user-redis", "from": "user", "to": "redis", "label": "缓存", "labelAt": [425, 486] },
+    { "id": "search-es", "from": "search", "to": "es", "label": "全文检索", "labelAt": [705, 486] },
+    { "id": "message-rabbitmq", "from": "message", "to": "rabbitmq", "label": "异步消息", "variant": "dashed", "labelAt": [985, 486] },
+    { "id": "data-xxljob", "from": "data", "to": "xxljob", "label": "统计任务", "variant": "dashed", "labelAt": [1265, 486] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "接入层", "items": ["Nacos 提供注册发现与集中配置", "Spring Cloud Gateway 统一入口并汇聚 Knife4j 文档", "zk-auth 以 JWT + RBAC 完成登录鉴权"] },
+    { "dot": "emerald", "title": "业务层", "items": ["10 个业务微服务按领域拆分，均依赖 zk-common 与 zk-api", "服务间同步调用走 OpenFeign（契约在 zk-api）", "zk-learning 目前仅保留启动骨架，功能待实现"] },
+    { "dot": "orange", "title": "数据与异步", "items": ["MySQL 存业务数据，Redis 做缓存与 Redisson 分布式锁", "Elasticsearch 承担课程搜索与推荐", "RabbitMQ 异步解耦，XXL-Job 执行定时统计与对账"] }
+  ]
+}

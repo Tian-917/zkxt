@@ -1,0 +1,11 @@
+# 部署期用的 Dockerfile：仿照天机学堂 /usr/local/src/script/Dockerfile
+# 部署脚本会把 app.jar 和本文件放进同一个临时目录再 docker build
+FROM openjdk:11.0-jre-buster
+ENV JAVA_OPTS=""
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+WORKDIR /app
+ADD app.jar /app/app.jar
+
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -Dfile.encoding=UTF-8 -jar /app/app.jar"]

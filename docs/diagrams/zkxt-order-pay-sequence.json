@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "课程下单与支付时序（zkxt）",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1620, 840],
+    "views": [
+      { "id": "order-create", "label": "创建订单", "focus": ["user", "gateway", "auth", "trade", "course"], "note": "请求先经网关鉴权，再由 zk-trade 校验课程并落单。" },
+      { "id": "payment", "label": "发起支付", "focus": ["user", "gateway", "pay", "channel"], "note": "zk-pay 调用第三方渠道统一下单并返回预支付参数。" },
+      { "id": "async-result", "label": "异步结果", "focus": ["channel", "pay", "mq"], "note": "渠道异步回调确认支付后，支付事件经 RabbitMQ 广播。" }
+    ]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "用户", "sublabel": "浏览器 / 小程序" },
+    { "id": "gateway", "type": "cloud", "label": "zk-gateway", "sublabel": "统一入口" },
+    { "id": "auth", "type": "security", "label": "zk-auth", "sublabel": "JWT 校验" },
+    { "id": "trade", "type": "backend", "label": "zk-trade", "sublabel": "订单服务" },
+    { "id": "course", "type": "backend", "label": "zk-course", "sublabel": "课程服务" },
+    { "id": "pay", "type": "backend", "label": "zk-pay", "sublabel": "支付服务" },
+    { "id": "channel", "type": "external", "label": "支付渠道", "sublabel": "支付宝 / 微信" },
+    { "id": "mq", "type": "messagebus", "label": "RabbitMQ", "sublabel": "异步消息" }
+  ],
+  "segments": [
+    { "from": 165, "to": 480, "label": "创建订单" },
+    { "from": 496, "to": 790, "label": "支付与回调" }
+  ],
+  "messages": [
+    { "id": "submit-order", "from": "user", "to": "gateway", "y": 190, "label": "提交订单", "variant": "emphasis" },
+    { "id": "verify-jwt", "from": "gateway", "to": "auth", "y": 230, "label": "校验 JWT", "variant": "security" },
+    { "id": "claims-ok", "from": "auth", "to": "gateway", "y": 266, "label": "claims ok", "variant": "return" },
+    { "id": "create-order", "from": "gateway", "to": "trade", "y": 306, "label": "POST /orders", "variant": "emphasis" },
+    { "id": "query-course", "from": "trade", "to": "course", "y": 346, "label": "查询课程价格" },
+    { "id": "course-info", "from": "course", "to": "trade", "y": 382, "label": "课程信息", "variant": "return" },
+    { "id": "order-created", "from": "trade", "to": "gateway", "y": 422, "label": "订单已创建", "variant": "return" },
+    { "id": "order-to-user", "from": "gateway", "to": "user", "y": 458, "label": "200 订单号", "variant": "return" },
+    { "id": "request-pay", "from": "user", "to": "gateway", "y": 500, "label": "发起支付" },
+    { "id": "apply-pay", "from": "gateway", "to": "pay", "y": 538, "label": "POST /pay/apply", "variant": "emphasis" },
+    { "id": "prepay", "from": "pay", "to": "channel", "y": 578, "label": "统一下单", "variant": "security" },
+    { "id": "prepay-result", "from": "channel", "to": "pay", "y": 614, "label": "预支付参数", "variant": "return" },
+    { "id": "pay-params", "from": "pay", "to": "gateway", "y": 652, "label": "支付参数", "variant": "return" },
+    { "id": "pay-callback", "from": "channel", "to": "pay", "y": 692, "label": "异步回调", "variant": "dashed" },
+    { "id": "pay-event", "from": "pay", "to": "mq", "y": 730, "label": "支付成功事件", "variant": "dashed" }
+  ],
+  "activations": [
+    { "participant": "gateway", "from": 185, "to": 672, "type": "cloud" },
+    { "participant": "auth", "from": 225, "to": 272, "type": "security" },
+    { "participant": "trade", "from": 300, "to": 428, "type": "backend" },
+    { "participant": "course", "from": 340, "to": 390, "type": "backend" },
+    { "participant": "pay", "from": 532, "to": 660, "type": "backend" },
+    { "participant": "channel", "from": 572, "to": 622, "type": "external" },
+    { "participant": "mq", "from": 725, "to": 748, "type": "messagebus" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "同步主链路", "items": ["网关统一鉴权后转发，业务服务无需重复解析 Token", "zk-trade 通过 OpenFeign 向 zk-course 校验课程与价格", "返回消息弱化展示，聚焦调用方向"] },
+    { "dot": "rose", "title": "支付外联", "items": ["zk-pay 对接支付宝 / 微信完成统一下单", "预支付参数经网关回传前端", "渠道以异步回调确认最终支付结果"] },
+    { "dot": "orange", "title": "异步解耦", "items": ["支付成功事件投递到 RabbitMQ", "下游服务（订单、消息、学习）各自订阅", "回调与事件均不阻塞主响应链路"] }
+  ]
+}

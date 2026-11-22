@@ -1,0 +1,7 @@
+tj:
+  remark:
+    liked-times:
+      biz-types:
+        - QA
+        - NOTE
+      max-biz-size: 30

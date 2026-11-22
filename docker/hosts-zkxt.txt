@@ -1,0 +1,15 @@
+# 职考云（zkxt）域名 → 虚拟机
+# 用法：SwitchHosts 里新建一个方案（比如 zkxt-dev），把下面几行贴进去；与 zkxt 方案互斥切换即可。
+# 注意：Jenkins 容器内部仍用 IP 访问 Gogs（容器没有这份 hosts），只有浏览器需要这些域名。
+
+# zkxt
+192.168.150.101 zkxt.com
+192.168.150.101 www.zkxt.com
+192.168.150.101 manage.zkxt.com
+192.168.150.101 api.zkxt.com
+192.168.150.101 git.zkxt.com
+192.168.150.101 jenkins.zkxt.com
+192.168.150.101 nacos.zkxt.com
+192.168.150.101 xxljob.zkxt.com
+192.168.150.101 es.zkxt.com
+192.168.150.101 mq.zkxt.com

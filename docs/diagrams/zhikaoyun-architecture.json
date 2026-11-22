@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "职考云 · 职业技能考证平台 — 后端整体架构",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "client",
+      "type": "frontend",
+      "label": "学员端 / 管理端",
+      "sublabel": "Vue3 · 小程序 · Knife4j",
+      "pos": [
+        630,
+        40
+      ],
+      "size": [
+        210,
+        66
+      ]
+    },
+    {
+      "id": "gateway",
+      "type": "cloud",
+      "label": "网关服务",
+      "sublabel": "Spring Cloud Gateway",
+      "pos": [
+        605,
+        168
+      ],
+      "size": [
+        260,
+        66
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "鉴权与用户",
+      "sublabel": "auth · user",
+      "pos": [
+        60,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "content",
+      "type": "backend",
+      "label": "内容与检索",
+      "sublabel": "course · media · search",
+      "pos": [
+        270,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "learn",
+      "type": "backend",
+      "label": "学习与考核",
+      "sublabel": "learning · exam",
+      "pos": [
+        480,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "cert",
+      "type": "backend",
+      "label": "证书服务",
+      "sublabel": "签发 · 验真 · 到期（本次新增）",
+      "pos": [
+        780,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ],
+      "tag": "新增"
+    },
+    {
+      "id": "trade",
+      "type": "backend",
+      "label": "交易与营销",
+      "sublabel": "trade · pay · promotion",
+      "pos": [
+        1010,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "community",
+      "type": "backend",
+      "label": "互动与消息",
+      "sublabel": "remark · message · data 看板",
+      "pos": [
+        1240,
+        330
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "MySQL · Redis · ES",
+      "sublabel": "13 个业务库 · 缓存 · 检索索引",
+      "pos": [
+        520,
+        600
+      ],
+      "size": [
+        300,
+        76
+      ]
+    },
+    {
+      "id": "mq",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "考核通过 / 发证 / 通知事件",
+      "pos": [
+        960,
+        600
+      ],
+      "size": [
+        300,
+        76
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "业务服务群 · 16 个 Maven 模块",
+      "wraps": [
+        "auth",
+        "content",
+        "learn",
+        "cert",
+        "trade",
+        "community"
+      ],
+      "pad": 46
+    },
+    {
+      "kind": "security-group",
+      "label": "中间件与存储 · Nacos 注册配置 · XXL-Job 调度 · Seata",
+      "wraps": [
+        "store",
+        "mq"
+      ],
+      "pad": 46
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "client",
+      "to": "gateway",
+      "label": "HTTPS",
+      "variant": "emphasis",
+      "labelAt": [
+        735,
+        140
+      ]
+    },
+    {
+      "id": "c2",
+      "from": "gateway",
+      "to": "auth",
+      "label": "JWT 校验",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c3",
+      "from": "gateway",
+      "to": "content",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c4",
+      "from": "gateway",
+      "to": "learn",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c5",
+      "from": "gateway",
+      "to": "cert",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c6",
+      "from": "gateway",
+      "to": "trade",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c7",
+      "from": "learn",
+      "to": "cert",
+      "label": "考核通过事件",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "c8",
+      "from": "cert",
+      "to": "mq",
+      "label": "发证 / 到期事件",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c9",
+      "from": "mq",
+      "to": "community",
+      "label": "站内信",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c10",
+      "from": "content",
+      "to": "store",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c11",
+      "from": "learn",
+      "to": "store",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c12",
+      "from": "cert",
+      "to": "store",
+      "label": "证书 / 唯一索引",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "本次新增：证书域 cert",
+      "items": [
+        "资格判定：学习学时达标 + 正式考成绩 ≥ 60",
+        "编号唯一：Redis 号段 + 数据库唯一索引兜底",
+        "发证幂等：uk(user_id, exam_id) 唯一约束",
+        "证书验真：公开接口 + 二维码，无需登录",
+        "到期复证：XXL-Job 每日扫描并推送提醒"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "技术栈",
+      "items": [
+        "Spring Boot 2.7 · Spring Cloud Alibaba 2021",
+        "MyBatis-Plus · MySQL 8 · Redis + Redisson",
+        "RabbitMQ · Elasticsearch 7.12 · XXL-Job",
+        "Nacos 注册与配置中心 · Seata · Knife4j"
+      ]
+    }
+  ]
+}

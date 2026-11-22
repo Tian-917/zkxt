@@ -1,0 +1,93 @@
+[
+  {
+    "name": "01-home",
+    "path": "/",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "02-search",
+    "path": "/search?keyword=会计",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "03-course",
+    "path": "/course/1",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "04-learn",
+    "path": "/learn/1",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "05-exam",
+    "path": "/exam/1/3",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "06-wrong",
+    "path": "/wrong",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "07-cert",
+    "path": "/cert",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "08-inbox",
+    "path": "/inbox",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "09-orders",
+    "path": "/orders",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "10-profile",
+    "path": "/profile",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "13-refund",
+    "path": "/refund",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "14-order",
+    "path": "/order",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  },
+  {
+    "name": "15-enrolled",
+    "path": "/profile",
+    "pass": true,
+    "missing": [],
+    "jsErrors": []
+  }
+]

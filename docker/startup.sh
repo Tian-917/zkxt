@@ -54,6 +54,7 @@ docker run -d --name "$CONTAINER_NAME" \
   -p "${PORT}:${PORT}" \
   -e JAVA_OPTS="$JAVA_OPTS" \
   --memory 384m --memory-swap -1 \
+  --restart unless-stopped \
   --network "$NETWORK" \
   $ENV_OPT \
   "$IMAGE_NAME" >/dev/null

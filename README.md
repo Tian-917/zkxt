@@ -169,25 +169,25 @@ Vue 3 + Vite，**13 个学员端页面 + 管理后台**全部调真实接口（�
 
 ## 快速开始
 
-前置：JDK 11、Maven 3.8+、Node 18+、Docker，以及 Nacos / MySQL / Redis / RabbitMQ。
+本机开发（推荐，细节见第 5 节）：JDK 11、Maven 3.8+、Node 18+；Nacos / MySQL / Redis / RabbitMQ / MongoDB / ES 跑在 `192.168.150.101` 上，不需要本机装中间件。
 
 ```bash
-# 1. 启动中间件（Nacos、MySQL、Redis、RabbitMQ、ES、MongoDB、XXL-Job）
-docker compose -f docker/docker-compose.yml up -d
+# 1. 编译并起全部 15 个服务
+mvn -T 1C -DskipTests package
+powershell -ExecutionPolicy Bypass -File tools\start-all.ps1
 
-# 2. 导入各服务的库表与种子数据
-docs/sql/  # 按服务导入
+# 2. 库表与种子数据（首次）：把 docs/sql/ 下的脚本按服务导入
+#    auth_privilege.sql / cert.sql / wrong_question.sql / note.sql /
+#    seed-cert-platform.sql / seed-study-records.sql / seed-teachers-questions.sql /
+#    xxl_job_init.sql / xxl-job-cert.sql
 
-# 3. 编译并部署全部服务（走 Jenkins 或本地脚本）
-bash docker/deploy.sh
-
-# 4. 前端
-cd web && npm install && npm run build
+# 3. 前端（开发模式，热更新）
+cd web && npm install && npm run dev     # http://127.0.0.1:5173
 ```
 
-服务默认端口：网关 `10010`，认证 `8081`，用户 `8082`，课程 `8086`，学习 `8090`，考试 `8089`，证书 `8091`，交易 `8088`，支付 `8087`。
+本机访问：学员端 <http://127.0.0.1:5173>，管理端 <http://127.0.0.1:5173/admin/login>，接口文档 <http://localhost:10010/doc.html>。
 
-部署完成后访问：
+容器化部署（课程环境的虚拟机，可选）：Jenkins 流水线 `zkxt-pipeline` 或 `bash docker/deploy.sh` 起 15 个容器，再用 `docker/setup-nginx.sh` 配好域名：
 
 | 入口 | 地址 |
 |---|---|

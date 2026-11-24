@@ -129,8 +129,8 @@ powershell -File tools\run-service.ps1 course
 
 ```bash
 cd web
-npm install     # 首次
-npm run dev     # http://127.0.0.1:5173
+pnpm install    # 首次（仓库里有 pnpm-lock.yaml；用 npm install 也能跑）
+pnpm dev        # http://127.0.0.1:5173
 ```
 
 Vue 3 + Vite，**13 个学员端页面 + 管理后台**全部调真实接口（登录 / 首页 / 搜索 / 购物车 / 课程详情 / 学习（内含小节笔记与问答）/ 答题 / 证书 / 错题本 / 订单支付 / 退款 / 消息 / 个人中心），详见 [web/README.md](web/README.md)。
@@ -182,7 +182,7 @@ powershell -ExecutionPolicy Bypass -File tools\start-all.ps1
 #    xxl_job_init.sql / xxl-job-cert.sql
 
 # 3. 前端（开发模式，热更新）
-cd web && npm install && npm run dev     # http://127.0.0.1:5173
+cd web && pnpm install && pnpm dev     # http://127.0.0.1:5173
 ```
 
 本机访问：学员端 <http://127.0.0.1:5173>，管理端 <http://127.0.0.1:5173/admin/login>，接口文档 <http://localhost:10010/doc.html>。

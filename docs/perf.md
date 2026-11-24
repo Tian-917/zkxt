@@ -2,7 +2,7 @@
 
 > 环境：本机 5 个服务 + VM 上 MySQL/Redis/RabbitMQ，Windows，单机
 > 工具：[tools/load_cert.py](../tools/load_cert.py)（Python 线程池并发，非 JMeter）
-> 时间：2026-11-19
+> 时间：2026-10
 
 ## 1. 结果
 

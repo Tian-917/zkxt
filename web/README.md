@@ -192,7 +192,7 @@ python tools/refresh_dashboard.py  # 按自己的课程数据刷新看板 TOP10 
 ```
 
 最近一次结果：**学员端 17/17、管理端 12/12、后端 25/25，前端 JS 报错 0**。
-报告与截图在 `docs/mockup/e2e/`（11-21 及更早）与 `docs/mockup/e2e2/`（11-22 最新）。
+报告与截图在 `docs/mockup/e2e/`（较早）与 `docs/mockup/e2e2/`（2026-10 最新）。
 
 > 联调中修掉的两个真实问题：
 > 1. **大整数 id 精度丢失**：课程 id 是 19 位雪花号，`Number('1549...')` 会被截断成 `1549...800`，
@@ -211,4 +211,4 @@ python tools/refresh_dashboard.py  # 按自己的课程数据刷新看板 TOP10 
 ## 截图
 
 `docs/mockup/e2e2/` 是这些页面的真实运行截图（Chrome 无头，1440×900），最近的几张：`ui-home-nav.png`（首页）、`orders-per-course.png`（订单按课程拆行）、`dashboard-charts.png`（管理端看板）。
-`docs/mockup/` 根目录的 `web-*.png` 是 11-20 的旧版界面，已被 11-22 的前端重写取代，不再引用。
+`docs/mockup/` 根目录的 `web-*.png` 是更早的旧版界面，已被 2026-10 的前端重写取代，不再引用。

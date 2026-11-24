@@ -20,7 +20,7 @@
 |---|---|---|
 | ![](docs/mockup/e2e2/ui-home-nav.png) | ![](docs/mockup/e2e2/orders-per-course.png) | ![](docs/mockup/e2e2/dashboard-charts.png) |
 
-> 截图为 2026-11-22 的实跑画面（Chrome 无头，1440×900）。学员端 13 个页面、管理端 10 个模块的完整截图见
+> 截图为 2026-10 的实跑画面（Chrome 无头，1440×900）。学员端 13 个页面、管理端 10 个模块的完整截图见
 > [`docs/mockup/e2e2/`](docs/mockup/e2e2/)，逐条联调报告见 [`web/README.md`](web/README.md#前后端联调测试)。
 
 ---
@@ -230,4 +230,4 @@ cd web && pnpm install && pnpm dev     # http://127.0.0.1:5173
 - 讲师信息、课程富文本为种子数据，非真实运营内容
 - 考点粒度 = 小节，未建独立知识点表
 - 发证同键高并发时 P99 会升高（唯一索引热点行），优化方向见 `docs/perf.md`
-- README 里的截图是 2026-11-22 的实跑画面，改 UI 后需重跑 `tools/e2e_*.mjs` 才会更新
+- README 里的截图是 2026-10 的实跑画面，改 UI 后需重跑 `tools/e2e_*.mjs` 才会更新

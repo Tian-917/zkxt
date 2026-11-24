@@ -123,7 +123,7 @@
       "id": "store",
       "type": "database",
       "label": "MySQL · Redis · ES",
-      "sublabel": "13 个业务库 · 缓存 · 检索索引",
+      "sublabel": "14 个业务库 · 缓存 · 检索索引",
       "pos": [
         520,
         600

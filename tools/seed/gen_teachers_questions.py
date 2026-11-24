@@ -16,7 +16,7 @@ import sys
 
 MYSQL = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 HOST, USER, PWD = "192.168.150.101", "root", "123"
-ROOT = r"D:\Java\tianji"
+ROOT = r"D:\Java\zkxt"
 OUT = os.path.join(ROOT, "docs", "sql", "seed-teachers-questions.sql")
 
 # admin 的密码哈希（123456），复用它省得生成

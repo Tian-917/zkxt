@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 const CDP = 'http://127.0.0.1:9333'
 const BASE = 'http://127.0.0.1:5173'
 const GW = 'http://127.0.0.1:10010'
-const OUT = 'D:\\Java\\tianji\\docs\\mockup\\e2e2'
+const OUT = 'D:\\Java\\zkxt\\docs\\mockup\\e2e2'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 // 看门狗：整脚本超过 150s 必须结束，避免卡死无输出
 setTimeout(() => { console.log('WATCHDOG: 脚本超时退出'); process.exit(2) }, 150000)

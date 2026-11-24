@@ -3,7 +3,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-OUT = r"D:\Java\tianji\docs\mockup"
+OUT = r"D:\Java\zkxt\docs\mockup"
 BG = (245, 247, 251)
 SHEET_BG = (238, 242, 248)
 PAD = 26

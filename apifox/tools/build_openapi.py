@@ -7,8 +7,8 @@ import sys
 
 CACHE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".apifox-cache")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "tianji-openapi.json")
-OUT_DUP = os.path.join(ROOT, "tianji-openapi-dup.json")
+OUT = os.path.join(ROOT, "zkxt-openapi.json")
+OUT_DUP = os.path.join(ROOT, "zkxt-openapi-dup.json")
 
 TYPE_MAP = {
     "integer": "integer", "long": "integer", "number": "number", "string": "string",

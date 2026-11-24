@@ -1,6 +1,6 @@
 # 职考云 · 职业技能考证平台
 
-> 学 · 练 · 考 · 证 一体化的在线考证平台后端：Spring Cloud Alibaba 微服务，**16 个业务模块 / 15 个服务**。
+> 学 · 练 · 考 · 证 一体化的在线考证平台：Spring Cloud Alibaba 微服务，**15 个微服务 + 2 个公共模块**（`zk-common` / `zk-api`）。
 > 核心闭环：学（学时累计）→ 练（错题本按考点聚合）→ 考（题库模考判分）→ 证（资格判定、签发、验真、到期复证）。
 
 [架构图（可交互）](docs/diagrams/zhikaoyun-architecture.html)
@@ -16,17 +16,12 @@
 
 ## 界面预览
 
-| 学员端首页 | 课程学习 | 在线考试 |
+| 学员端首页（分类导航 + 轮播） | 我的订单（按课程聚合） | 管理端数据看板 |
 |---|---|---|
-| ![](docs/mockup/web-home.png) | ![](docs/mockup/web-learn.png) | ![](docs/mockup/web-exam.png) |
+| ![](docs/mockup/e2e2/ui-home-nav.png) | ![](docs/mockup/e2e2/orders-per-course.png) | ![](docs/mockup/e2e2/dashboard-charts.png) |
 
-| 证书中心 | 错题本 | 我的订单 |
-|---|---|---|
-| ![](docs/mockup/web-cert.png) | ![](docs/mockup/web-wrong.png) | ![](docs/mockup/web-orders.png) |
-
-| 学习进度 | 搜索 | 站内信 |
-|---|---|---|
-| ![](docs/mockup/web-progress.png) | ![](docs/mockup/web-search.png) | ![](docs/mockup/web-inbox.png) |
+> 截图为 2026-11-22 的实跑画面（Chrome 无头，1440×900）。学员端 13 个页面、管理端 10 个模块的完整截图见
+> [`docs/mockup/e2e2/`](docs/mockup/e2e2/)，逐条联调报告见 [`web/README.md`](web/README.md#前后端联调测试)。
 
 ---
 
@@ -35,13 +30,13 @@
 | 分类 | 选型 |
 |---|---|
 | 框架 | Spring Boot 2.7.2 · Spring Cloud 2021 · Spring Cloud Alibaba 2021 |
-| 注册/配置 | Nacos（注册 + 8 个 `shared-*.yaml` 共享配置） |
-| 数据 | MySQL 8（13 个业务库）· MyBatis-Plus · MongoDB（考试记录） |
+| 注册/配置 | Nacos（注册 + 9 个 `shared-*.yaml` 共享配置：feign / logs / mybatis / redis / mq / mongo / seata / spring / xxljob） |
+| 数据 | MySQL 8（14 个业务库、66 张表）· MyBatis-Plus · MongoDB（考试记录） |
 | 缓存 | Redis + Redisson（分布式锁、缓存） |
 | 消息 | RabbitMQ（事件驱动：答题、发证、通知） |
 | 搜索 | Elasticsearch 7.12（课程检索） |
 | 调度 | XXL-Job（到期复证提醒、发证补偿） |
-| 事务 | Seata（声明 + 少量使用；主链路走最终一致 + 补偿） |
+| 事务 | Seata（AT 模式已接入，但主链路未启用，走最终一致 + 补偿；见 [docs/未实现清单.md](docs/未实现清单.md)） |
 | 文档 | Knife4j（网关聚合 + 单服务文档） |
 
 ## 2. 服务与端口
@@ -146,7 +141,7 @@ Vue 3 + Vite，**13 个学员端页面 + 管理后台**全部调真实接口（�
 
 ## 5.5 CI/CD（Gogs + Jenkins + Docker）
 
-代码托管在 Gogs，Jenkins 流水线 zkxt-pipeline 自动完成「拉代码 → Maven 打包 → 构建镜像 → 部署到虚拟机 Docker → 冒烟」，与课程原来的 	j-* 任务完全隔离（独立视图 职考云）。详见 [docs/CI-CD.md](docs/CI-CD.md)。
+代码托管在 Gogs（课程环境 `git.zkxt.com`），并镜像到 GitHub（[Tian-917/zkxt](https://github.com/Tian-917/zkxt)）。Jenkins 流水线 zkxt-pipeline 自动完成「拉代码 → Maven 打包 → 构建镜像 → 部署到虚拟机 Docker → 冒烟」，与课程原来的 `j-*` 任务完全隔离（独立视图 职考云）。详见 [docs/CI-CD.md](docs/CI-CD.md)。
 
 ## 6. 种子数据
 
@@ -170,7 +165,7 @@ Vue 3 + Vite，**13 个学员端页面 + 管理后台**全部调真实接口（�
 
 - [架构图（可交互）](docs/diagrams/zhikaoyun-architecture.html)
 - [证书域设计](docs/证书域设计.md) / [错题本设计](docs/错题本设计.md)
-- [前端原型](docs/mockup/zhikaoyun-ui-preview.png) / [前端实跑截图](docs/mockup/zhikaoyun-web-preview.png)
+- [前端原型](docs/mockup/zhikaoyun-ui-preview.png) / [前端实跑截图](docs/mockup/e2e2/)（学员端 13 页 + 管理端 10 模块）
 
 ## 快速开始
 
@@ -200,7 +195,7 @@ cd web && npm install && npm run build
 | 管理端 | http://manage.zkxt.com |
 | 接口文档 | http://api.zkxt.com/doc.html |
 
-测试账号：学员 `jack / 123456`，管理端 `admin / 123456`（带验证码）。
+测试账号：学员 `jack / 123456`，管理端 `admin / 123456`。
 
 ## 9. 密钥与环境变量
 
@@ -230,7 +225,9 @@ cd web && npm install && npm run build
 
 ## 10. 已知限制
 
-- 前端未接登录鉴权（固定 `user-info` 头），视频播放器为占位
+- 前端已接真实登录鉴权（JWT + 路由守卫 + 401 自动续期），但只做到路由级：按钮/字段级权限未细分
+- 视频播放器为占位（模拟播放驱动进度与学时），没有真实媒资
 - 讲师信息、课程富文本为种子数据，非真实运营内容
 - 考点粒度 = 小节，未建独立知识点表
 - 发证同键高并发时 P99 会升高（唯一索引热点行），优化方向见 `docs/perf.md`
+- README 里的截图是 2026-11-22 的实跑画面，改 UI 后需重跑 `tools/e2e_*.mjs` 才会更新

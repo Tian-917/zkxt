@@ -6,7 +6,8 @@
 
 | 组件 | 作用 | 本地地址（示例） |
 |---|---|---|
-| **Gogs** | 代码托管（Git 服务） | `http://git.zkxt.com/zkxt/zkxt` |
+| **Gogs** | 代码托管（Git 服务，课程环境） | `http://git.zkxt.com/zkxt/zkxt` |
+| **GitHub** | 代码托管（对外公开的镜像） | `https://github.com/Tian-917/zkxt` |
 | **Jenkins** | 流水线：拉代码 → 打包 → 构建镜像 → 部署 → 冒烟 | `http://jenkins.zkxt.com/job/zkxt-pipeline/` |
 | **Docker** | 运行 15 个微服务容器 + 中间件 | `http://192.168.150.101:2375` |
 
@@ -55,10 +56,10 @@ zkxt/
 
 | 文件 | 作用 |
 |---|---|
-| `Jenkinsfile` | 流水线定义（5 个阶段 + 失败日志） |
+| `Jenkinsfile` | 流水线定义（4 个阶段：拉取代码 / 编译打包 / 构建镜像并部署 / 冒烟验证，失败时 dump 日志） |
 | `docker/startup.sh` | 单服务部署：拷 jar → build → run（固定内存、接入 `zkxt-net`、发布端口） |
 | `docker/Dockerfile.runtime` | 运行镜像：`openjdk:11.0-jre-buster` + `app.jar` |
-| `docker/deploy.sh` | 全量部署：两轮启动，第二轮重启未就绪的服务 |
+| `docker/deploy.sh` | 全量部署：启动后最多 4 轮（`round 1..4`，每轮等 10s）重启仍未就绪的服务 |
 | `docker/smoke.sh` | 部署后冒烟（带重试，慢启动不误判） |
 | `docker/nginx-zkxt.conf` | `*.zkxt.com` 虚拟主机配置 |
 | `docker/setup-nginx.sh` | 把上面的配置装到宿主机 nginx 并 reload |

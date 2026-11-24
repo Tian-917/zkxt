@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 
 const CDP = 'http://127.0.0.1:9333'
 const BASE = 'http://127.0.0.1:5173'
-const OUT = 'D:\\Java\\tianji\\docs\\mockup\\e2e2'
+const OUT = 'D:\\Java\\zkxt\\docs\\mockup\\e2e2'
 const COURSE = '7'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 mkdirSync(OUT, { recursive: true })

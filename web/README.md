@@ -1,7 +1,7 @@
 # 职考云前端（web）
 
-> Vue 3 + Vite 的最小可用前端：4 个页面，全部接**真实后端接口**（经网关 10010）。
-> 不是原型图——`docs/mockup/` 里的是设计稿，这里是能跑、能点、能出数据的工程。
+> Vue 3 + Vite 的前端：**18 个路由页面**（学员端 13 页 + 登录/注册/找回密码 + 管理端 2 页），全部接**真实后端接口**（经网关 10010）。
+> 不是原型图——`docs/mockup/zhikaoyun-ui-preview.png` 是设计稿，`docs/mockup/e2e2/` 是这里跑出来的实拍截图。
 
 ## 页面
 
@@ -18,9 +18,11 @@
 | `/search` | `GET /ss/courses/portal?keyword=&categoryIdLv1=&free=` | 搜索：关键词 + 一级分类 + 免费筛选（ES 高亮） |
 | `/course/:id` | `GET /cs/course/{id}?withCatalogue=true` | 课程详情：目录、价格、购买/免费报名 |
 | `/order?courseIds=` | `prePlaceOrder` → `user-coupons/available` → `placeOrder` → `pay/*` | 确认订单 → **优惠券下拉（方案式，显示优惠/应付）** → 支付成功 |
-| `/orders` | `GET /ts/orders/page`、`PUT /ts/orders/{id}/cancel` | 我的订单：状态、明细、去支付/去学习/**取消订单** |
+| `/orders` | `GET /ts/orders/page`、`PUT /ts/orders/{id}/cancel`、`POST /ts/refund-apply` | 我的订单：一笔订单按课程拆行（每门课单独「去学习 / 申请退款」），底部去支付 / 取消订单 |
 | `/profile` | `us/users`、`ls/lessons`、`ls/lessons/plans`、`es/exams`、`ts/orders`、`prs/user-coupons`、`prs/user-coupons/{code}/exchange`、`ls/points`、`ls/sign-records`、`ls/boards` | 个人中心（左侧菜单）：我的课程 / **学习计划**（本周频次+进度）/ 我的考试 / 我的订单 / 我的优惠券（含**领券中心**与**兑换码兑换**）/ 我的积分（整月签到日历+积分明细+榜单）/ 个人设置 |
-| `/register` | `POST /us/users/code`、`POST /us/students/register` | 学员注册：手机号 + 验证码（60s 倒计时）+ 密码；成功后显示「去登录」 |`n| `/forgot` | `POST /us/users/code`、`PUT /us/students/password` | 找回密码：验证码重置登录密码；成功后显示「去登录」 |`n| `/cart` | `GET/POST/DELETE /ts/carts` | 购物车：勾选、删除、合计、去下单（带选中的 courseIds） |
+| `/register` | `POST /us/users/code`、`POST /us/students/register` | 学员注册：手机号 + 验证码（60s 倒计时）+ 密码；成功后显示「去登录」 |
+| `/forgot` | `POST /us/users/code`、`PUT /us/students/password` | 找回密码：验证码重置登录密码；成功后显示「去登录」 |
+| `/cart` | `GET/POST/DELETE /ts/carts` | 购物车：勾选、删除、合计、去下单（带选中的 courseIds） |
 | `/refund` | `POST /ts/refund-apply`、`GET /ts/refund-apply/page` | 退款：填写原因提交、查看退款进度 |
 
 ## 访客（未登录）能做什么
@@ -32,7 +34,7 @@
 | 课程详情目录 / 学习页 | **前 2 节标「试看」可学**，第 3 节起 🔒 | 未购买：点试看进学习页（无进度写入、笔记问答隐藏）；点锁定节 → 游客弹登录、已登录跳下单 |
 | 试看的判定口径 | 读 `course_catalogue.trailer` | 后端发放播放签名时也按 `trailer` 校验，前端只是展示；两者同一数据源 |
 | 服务端兜底 | 播放签名 / 进度写入 | 未购买：锁定节签名返回 `403 课程不支持试看`；写学习进度校验 `lesson.userId == 当前用户`，越权报 `未购买该课程` |
-| `/profile`、`/cart`、`/orders`、`/inbox`、`/wrong`、`/learn`、`/exam` | ❌ 需登录 | 路由守卫拦下并跳登录 |
+| `/profile`、`/cart`、`/orders`、`/inbox`、`/wrong`、`/learn`、`/exam` | ❌ 需登录 | 路由守卫拦下，弹「登录后才能继续」对话框（可去登录或暂不登录，不强制跳转） |
 
 实现要点：`main.js` 给首页/搜索/详情标 `meta.public`；`api.js` 在**没有 token**时遇到 401 只抛 `需要登录`、不再强制跳转（避免访客被莫名踢走）。
 
@@ -53,7 +55,7 @@
 ```
 
 - `rememberMe=true` 时 token 有效期 7 天，否则只有 **5 分钟**（`JwtConstants.JWT_TOKEN_TTL`）。
-- 路由守卫：未登录访问任何页面都重定向到 `/login`。
+- 路由守卫：首页 / 搜索 / 课程详情 / 学习页标了 `meta.public`，游客可浏览；其余页面未登录时弹登录提示对话框（不强制跳转），点「去登录」才带 `redirect` 回跳。
 - 演示便捷：`/login?auto=1` 用默认账号自动登录（生产应移除）。
 
 ### token 自动续期
@@ -84,7 +86,7 @@ access token 只有 5 分钟，过期后不该把用户踢回登录页。现在�
 ## 启动
 
 ```bash
-# 前置：后端 5 个服务 + 网关在跑（gateway 10010、course 8086、search 8083、exam 8089、cert 8091）
+# 前置：后端 15 个服务在跑（网关 10010、auth 8081 … data 8093），用根目录 tools\start-all.ps1 一把起
 cd web
 pnpm install
 pnpm dev          # http://127.0.0.1:5173
@@ -173,7 +175,7 @@ PUT  /sms/inboxes/read-all                            全部已读
 ```bash
 node tools/e2e_full.mjs      # 13 项：页面渲染 + 下单支付闭环 + 支付后课表核对
 node tools/e2e_ui2.mjs       # 10 项：小节内笔记/提问/回答/回复某人 + 个人中心各页 + 购物车 + 优惠券下拉
-node tools/e2e_auth.mjs      # 4 项：注册(验证码) / 短信验证码登录 / 找回密码 / 新密码登录
+node tools/e2e_auth.mjs      # 4 项：注册(验证码) / 找回密码 / 新密码登录（短信登录入口已移除）
 node tools/e2e_extra.mjs     # 4 项：学习计划 / 取消订单 / 撤销退款 / 回答点赞
 node tools/e2e_trial.mjs    # 6 项：分类悬停展开 / 二级分类跳搜索 / 前两节试看 / 锁定节提示
 python tools/trial_guard_smoke.py  # 4 项：播放签名与进度写入的服务端兜底
@@ -208,4 +210,5 @@ python tools/refresh_dashboard.py  # 按自己的课程数据刷新看板 TOP10 
 
 ## 截图
 
-`docs/mockup/web-*.png` 是这四个页面的真实运行截图（Chrome 无头），不是设计稿。
+`docs/mockup/e2e2/` 是这些页面的真实运行截图（Chrome 无头，1440×900），最近的几张：`ui-home-nav.png`（首页）、`orders-per-course.png`（订单按课程拆行）、`dashboard-charts.png`（管理端看板）。
+`docs/mockup/` 根目录的 `web-*.png` 是 11-20 的旧版界面，已被 11-22 的前端重写取代，不再引用。

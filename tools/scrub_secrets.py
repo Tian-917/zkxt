@@ -5,7 +5,7 @@
 """
 import io
 
-ROOT = r"D:\Java\tianji"
+ROOT = r"D:\Java\zkxt"
 
 # 文件 -> {行号: 新行内容(不含缩进，会保留原缩进)}
 PLAN = {

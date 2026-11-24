@@ -4,7 +4,7 @@ import io
 import os
 import random
 
-OUT = r"D:\Java\tianji\docs\mockup"
+OUT = r"D:\Java\zkxt\docs\mockup"
 os.makedirs(OUT, exist_ok=True)
 
 CSS = r"""

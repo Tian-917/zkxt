@@ -12,7 +12,7 @@ if not TOKEN:
     sys.exit("Set APIFOX_TOKEN (e.g. 'Bearer <access token>') before running this script.")
 BASE = "https://api.apifox.com/api/v1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DUP = os.path.join(ROOT, "tianji-openapi-dup.json")
+DUP = os.path.join(ROOT, "zkxt-openapi-dup.json")
 
 
 def call(method, url, payload=None):
